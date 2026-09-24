@@ -1,0 +1,10 @@
+{
+  "description": "Streamline compliance tracking for international students in Malaysia, enabling departments to monitor visa status and ensure regulatory adherence.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -11,11 +11,13 @@ Open `index.html` in a browser, or publish the repository from GitHub Pages usin
 - `index.html` — page structure and navigation
 - `styles.css` — styling and responsive layout rules
 - `data.js` — dummy student and travel-record data
-- `app.js` — dashboard, filtering, details, alerts, and CSV export behaviour
+- `app.js` — dashboard, review decisions, filtering, alerts, and CSV export behaviour
+- `assets/compliance-orbit.png` — original interface illustration
 
 ## Current functionality
 
-- Dashboard summary and compliance distribution
+- Daily operations dashboard with a priority review queue
+- Interactive verification or return-for-correction decisions; verified entry days update the prototype total
 - Search and filtering of student records
 - Individual student compliance and travel-record views
 - Alerts with a prototype notice action

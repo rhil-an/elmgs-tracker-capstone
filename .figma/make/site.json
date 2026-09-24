@@ -1,7 +1,8 @@
 {
-  "description": "Streamline compliance tracking for international students in Malaysia, enabling departments to monitor visa status and ensure regulatory adherence.",
+  "title": "ELMGS Tracker",
+  "description": "A prototype for HELP University International Student Services to monitor student travel submissions and stay compliance.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,

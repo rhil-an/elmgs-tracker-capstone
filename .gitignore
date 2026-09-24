@@ -1,25 +1,11 @@
-node_modules/
-dist/
-build/
-.env.local
-.make/
+# Keep original Word and Figma Make files in local storage, not GitHub.
 *.docx
 *.make
-.cache/
-.env*
-.vite/
-vite.config.*.timestamp-*
-*.tsbuildinfo
-*-debug.log*
-logs/
-*.log
-.claude-replay.*
-.tmp-*
-/.figma/design-context/
 
-# Platform-managed agentplat state, not project source. In the
-# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
-# repo root IS the workspace root, so these land inside this repo rather than
-# beside it.
-/.plugins/
-/.opencode-skills/
+# Old generated files from the previous Vite version are not source files.
+node_modules/
+dist/
+
+# Common operating-system files.
+.DS_Store
+Thumbs.db

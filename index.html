@@ -1,16 +1,27 @@
 <!doctype html>
-<html lang="<!-- figma:lang -->">
+<html lang="en">
   <head>
-    <!-- figma:head-start -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ELMGS Tracker frontend prototype for international student stay compliance." />
     <title>ELMGS Tracker</title>
-    <!-- figma:head-end -->
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- figma:body-start -->
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-    <!-- figma:body-end -->
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><p class="brand-mark">ELMGS</p><p>HELP University</p><small>International Student Services</small></div>
+        <nav class="navigation" aria-label="Main navigation">
+          <button class="nav-link is-active" data-page="dashboard">Dashboard</button>
+          <button class="nav-link" data-page="students">Student records</button>
+          <button class="nav-link" data-page="alerts">Alerts and actions</button>
+          <button class="nav-link" data-page="reports">Reports</button>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">IA</span><div><strong>ISSD administrator</strong><small>Prototype mode</small></div></div>
+      </aside>
+      <main class="content"><div id="app" aria-live="polite"></div></main>
+    </div>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

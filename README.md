@@ -1,28 +1,24 @@
-# ELMGS Tracker Capstone
+# ELMGS Tracker
 
-Frontend prototype for HELP University's ELMGS Tracker, a system that helps the International Student Services Department monitor international-student travel submissions and stay-compliance progress.
+A plain HTML, CSS, and JavaScript frontend prototype for HELP University's ELMGS Tracker. It is designed to deploy directly from the `main` branch with GitHub Pages.
 
-## Current prototype
+## Run it
 
-The React app currently models the administrator experience: a compliance dashboard, searchable student records, student-detail views, alerts, and reporting. It uses local dummy data only. The next product work is to align the model with the ELMGS MVP: entry and exit submissions, evidence upload, verification, verified stay-day totals, remaining required days, and a student-facing portal.
+Open `index.html` in a browser, or publish the repository from GitHub Pages using **Deploy from a branch → main → /(root)**. No package installation or build command is needed.
 
-## Development
+## Files to edit
 
-```powershell
-pnpm install --frozen-lockfile
-pnpm dev
-pnpm run build
-```
+- `index.html` — page structure and navigation
+- `styles.css` — styling and responsive layout rules
+- `data.js` — dummy student and travel-record data
+- `app.js` — dashboard, filtering, details, alerts, and CSV export behaviour
 
-## Repository layout
+## Current functionality
 
-```text
-src/              React components, styles, and dummy data
-.figma/           Figma Make project metadata
-package.json       Scripts and dependencies
-vite.config.ts     Vite, React, Tailwind, and Figma Make configuration
-```
+- Dashboard summary and compliance distribution
+- Search and filtering of student records
+- Individual student compliance and travel-record views
+- Alerts with a prototype notice action
+- CSV download of the mock compliance report
 
-## Repository scope
-
-This repository contains implementation source and developer-facing project information only. Original Word documents and Figma Make exports are deliberately kept in the local-only `elmgs-tracker-local` folder beside this repository. The `.gitignore` prevents those binary artifacts from being added by mistake.
+All displayed data is dummy data. Replace `data.js` with SharePoint or Power Apps data when the backend is ready.

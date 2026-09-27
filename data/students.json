@@ -1,0 +1,402 @@
+[
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500001",
+    "name": "Sam Wilson",
+    "nationality": "American",
+    "faculty": "Bachelor of Business (Hons)",
+    "lastCheckIn": "2026-09-20",
+    "visaExpiry": "2026-12-10"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500002",
+    "name": "Aisha Rahman",
+    "nationality": "Bangladeshi",
+    "faculty": "Bachelor of Computer Science (Hons)",
+    "lastCheckIn": "2026-09-18",
+    "visaExpiry": "2027-01-22"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Overseas",
+    "id": "B2500003",
+    "name": "Liu Wen",
+    "nationality": "Chinese",
+    "faculty": "Master of Data Science",
+    "lastCheckIn": "2026-08-02",
+    "visaExpiry": "2026-10-18"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Local",
+    "id": "B2500004",
+    "name": "Ahmed Reza Karimi",
+    "nationality": "Iranian",
+    "faculty": "MBA Business Administration",
+    "lastCheckIn": "2026-07-14",
+    "visaExpiry": "2026-09-05"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500005",
+    "name": "Amara Diallo",
+    "nationality": "Senegalese",
+    "faculty": "Bachelor of International Business",
+    "lastCheckIn": "2026-09-21",
+    "visaExpiry": "2027-02-12"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Overseas",
+    "id": "B2500006",
+    "name": "Nhat Minh Tran",
+    "nationality": "Vietnamese",
+    "faculty": "Bachelor of Psychology (Hons)",
+    "lastCheckIn": "2026-08-08",
+    "visaExpiry": "2026-10-06"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500007",
+    "name": "Priya Nair",
+    "nationality": "Indian",
+    "faculty": "Bachelor of Laws (Hons)",
+    "lastCheckIn": "2026-09-19",
+    "visaExpiry": "2027-03-28"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500008",
+    "name": "Daniel Okafor",
+    "nationality": "Nigerian",
+    "faculty": "Master of Project Management",
+    "lastCheckIn": "2026-07-01",
+    "visaExpiry": "2026-08-30"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500009",
+    "name": "Siti Nur Amani",
+    "nationality": "Indonesian",
+    "faculty": "Bachelor of Accounting (Hons)",
+    "lastCheckIn": "2026-09-22",
+    "visaExpiry": "2027-01-15"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Local",
+    "id": "B2500010",
+    "name": "Maria Santos",
+    "nationality": "Filipino",
+    "faculty": "Bachelor of Hospitality and Tourism Management",
+    "lastCheckIn": "2026-08-16",
+    "visaExpiry": "2026-10-20"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500011",
+    "name": "Kanya Chaiyasit",
+    "nationality": "Thai",
+    "faculty": "Master of Education",
+    "lastCheckIn": "2026-09-12",
+    "visaExpiry": "2027-04-09"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500012",
+    "name": "Liam O'Connor",
+    "nationality": "Irish",
+    "faculty": "Bachelor of Communication (Hons)",
+    "lastCheckIn": "2026-09-20",
+    "visaExpiry": "2026-11-24"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Local",
+    "id": "B2500013",
+    "name": "Grace Mutesi",
+    "nationality": "Ugandan",
+    "faculty": "Bachelor of Business Analytics (Hons)",
+    "lastCheckIn": "2026-07-10",
+    "visaExpiry": "2026-09-14"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Overseas",
+    "id": "B2500014",
+    "name": "Nguyen Thi Lan",
+    "nationality": "Vietnamese",
+    "faculty": "Bachelor of Biomedical Science (Hons)",
+    "lastCheckIn": "2026-08-01",
+    "visaExpiry": "2026-10-11"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500015",
+    "name": "Tenzin Dorjee",
+    "nationality": "Bhutanese",
+    "faculty": "Master of International Relations",
+    "lastCheckIn": "2026-09-17",
+    "visaExpiry": "2027-05-05"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500016",
+    "name": "Sofía Martínez",
+    "nationality": "Mexican",
+    "faculty": "Bachelor of Design (Hons)",
+    "lastCheckIn": "2026-09-23",
+    "visaExpiry": "2027-02-19"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Local",
+    "id": "B2500017",
+    "name": "Hassan Ali",
+    "nationality": "Pakistani",
+    "faculty": "Bachelor of Mechanical Engineering (Hons)",
+    "lastCheckIn": "2026-08-11",
+    "visaExpiry": "2026-10-03"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500018",
+    "name": "Kofi Mensah",
+    "nationality": "Ghanaian",
+    "faculty": "Bachelor of Economics (Hons)",
+    "lastCheckIn": "2026-07-05",
+    "visaExpiry": "2026-08-27"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500019",
+    "name": "Yuki Tanaka",
+    "nationality": "Japanese",
+    "faculty": "Master of Applied Finance",
+    "lastCheckIn": "2026-09-19",
+    "visaExpiry": "2027-06-12"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500020",
+    "name": "Rania Haddad",
+    "nationality": "Jordanian",
+    "faculty": "Bachelor of Information Technology (Hons)",
+    "lastCheckIn": "2026-09-15",
+    "visaExpiry": "2026-12-20"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Local",
+    "id": "B2500021",
+    "name": "Budi Santoso",
+    "nationality": "Indonesian",
+    "faculty": "Bachelor of Marketing (Hons)",
+    "lastCheckIn": "2026-08-09",
+    "visaExpiry": "2026-10-25"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500022",
+    "name": "Chisom Eze",
+    "nationality": "Nigerian",
+    "faculty": "Bachelor of Psychology (Hons)",
+    "lastCheckIn": "2026-09-21",
+    "visaExpiry": "2027-02-04"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500023",
+    "name": "Faisal Khan",
+    "nationality": "Pakistani",
+    "faculty": "Master of Cyber Security",
+    "lastCheckIn": "2026-07-02",
+    "visaExpiry": "2026-09-08"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500024",
+    "name": "Zara Williams",
+    "nationality": "British",
+    "faculty": "Bachelor of Mass Communication (Hons)",
+    "lastCheckIn": "2026-09-18",
+    "visaExpiry": "2027-03-17"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Overseas",
+    "id": "B2500025",
+    "name": "Minh Anh Pham",
+    "nationality": "Vietnamese",
+    "faculty": "Bachelor of Software Engineering (Hons)",
+    "lastCheckIn": "2026-08-04",
+    "visaExpiry": "2026-10-15"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500026",
+    "name": "Evelyn Wanjiku",
+    "nationality": "Kenyan",
+    "faculty": "Bachelor of Finance (Hons)",
+    "lastCheckIn": "2026-09-20",
+    "visaExpiry": "2027-01-27"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500027",
+    "name": "Carlos Rivera",
+    "nationality": "Colombian",
+    "faculty": "Master of Business Administration",
+    "lastCheckIn": "2026-09-16",
+    "visaExpiry": "2027-05-11"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Local",
+    "id": "B2500028",
+    "name": "Sokha Chea",
+    "nationality": "Cambodian",
+    "faculty": "Bachelor of Architecture (Hons)",
+    "lastCheckIn": "2026-07-06",
+    "visaExpiry": "2026-08-31"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Local",
+    "id": "B2500029",
+    "name": "Omar Farouk",
+    "nationality": "Egyptian",
+    "faculty": "Bachelor of Electrical Engineering (Hons)",
+    "lastCheckIn": "2026-08-12",
+    "visaExpiry": "2026-10-08"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500030",
+    "name": "Hana Kim",
+    "nationality": "South Korean",
+    "faculty": "Bachelor of Early Childhood Education (Hons)",
+    "lastCheckIn": "2026-09-14",
+    "visaExpiry": "2027-04-02"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500031",
+    "name": "Bola Adeyemi",
+    "nationality": "Nigerian",
+    "faculty": "Bachelor of Business (Hons)",
+    "lastCheckIn": "2026-09-22",
+    "visaExpiry": "2026-11-29"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Overseas",
+    "id": "B2500032",
+    "name": "Maya Patel",
+    "nationality": "Indian",
+    "faculty": "Master of Data Science",
+    "lastCheckIn": "2026-08-07",
+    "visaExpiry": "2026-10-14"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500033",
+    "name": "Nurul Huda",
+    "nationality": "Indonesian",
+    "faculty": "Bachelor of Law (Hons)",
+    "lastCheckIn": "2026-09-17",
+    "visaExpiry": "2027-02-16"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Local",
+    "id": "B2500034",
+    "name": "Peter Mwangi",
+    "nationality": "Kenyan",
+    "faculty": "Bachelor of Computer Science (Hons)",
+    "lastCheckIn": "2026-07-03",
+    "visaExpiry": "2026-08-29"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500035",
+    "name": "Anya Petrova",
+    "nationality": "Russian",
+    "faculty": "Master of Education",
+    "lastCheckIn": "2026-09-11",
+    "visaExpiry": "2027-06-25"
+  },
+  {
+    "status": "Warning",
+    "currentLocation": "Local",
+    "id": "B2500036",
+    "name": "Tariq Mahmood",
+    "nationality": "Pakistani",
+    "faculty": "Bachelor of Accounting (Hons)",
+    "lastCheckIn": "2026-08-10",
+    "visaExpiry": "2026-10-12"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500037",
+    "name": "Linh Hoang",
+    "nationality": "Vietnamese",
+    "faculty": "Bachelor of Biomedical Science (Hons)",
+    "lastCheckIn": "2026-09-20",
+    "visaExpiry": "2027-01-09"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500038",
+    "name": "Olivia Brown",
+    "nationality": "Australian",
+    "faculty": "Bachelor of Communication (Hons)",
+    "lastCheckIn": "2026-09-13",
+    "visaExpiry": "2027-04-22"
+  },
+  {
+    "status": "Non-Compliant",
+    "currentLocation": "Overseas",
+    "id": "B2500039",
+    "name": "Abdul Rahim",
+    "nationality": "Bangladeshi",
+    "faculty": "Master of Project Management",
+    "lastCheckIn": "2026-07-08",
+    "visaExpiry": "2026-09-05"
+  },
+  {
+    "status": "Compliant",
+    "currentLocation": "Local",
+    "id": "B2500040",
+    "name": "Valentina Rossi",
+    "nationality": "Italian",
+    "faculty": "Bachelor of Design (Hons)",
+    "lastCheckIn": "2026-09-21",
+    "visaExpiry": "2027-03-08"
+  }
+]

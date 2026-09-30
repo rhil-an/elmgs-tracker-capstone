@@ -1,4 +1,11 @@
-:root { --red:#b21f35; --red-dark:#8f1328; --ink:#1c2430; --muted:#647181; --line:#dfe4e8; --page:#f4f6f8; --surface:#fff; --green-bg:#e5f5eb; --green:#176b3a; --amber-bg:#fff2d9; --amber:#a86100; --danger-bg:#fbe5e8; --danger:#a82034; --focus:#1769aa; }
+:root {
+    --red: #e21d2f;
+    --red-dark: #b51222;
+    --ink: #111111;
+    --muted: #657384;
+    --page: #f4f6f8;
+    --surface: #ffffff;
+}
 * { box-sizing:border-box; }
 html { overflow-x:hidden; background:var(--page); }
 body { margin:0; min-width:320px; overflow-x:hidden; color:var(--ink); background:var(--page); font:16px/1.45 Arial, Helvetica, sans-serif; }

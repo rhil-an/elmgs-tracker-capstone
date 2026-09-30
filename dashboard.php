@@ -71,11 +71,80 @@ usort($attentionAlerts, function ($a, $b) {
         ?: strcmp($a['student']['id'], $b['student']['id']);
 });
 
-$attentionCount = count($attentionAlerts);
-$totalPages = max(1, (int)ceil($attentionCount / 5));
-$requestedPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
-$page = max(1, min($totalPages, $requestedPage ?: 1));
-$visibleAlerts = array_slice($attentionAlerts, ($page - 1) * 5, 5);
+$level = $_GET['level'] ?? 'all';
+
+$requestedPerPage = filter_input(
+    INPUT_GET,
+    'per_page',
+    FILTER_VALIDATE_INT
+);
+
+$perPage = $requestedPerPage === false || $requestedPerPage === null
+    ? 5
+    : $requestedPerPage;
+
+$allowedLevels = ['all', 'medium', 'high'];
+$allowedPageSizes = [5, 10, 20, 0];
+
+if (!in_array($level, $allowedLevels, true)) {
+    $level = 'all';
+}
+
+if (!in_array($perPage, $allowedPageSizes, true)) {
+    $perPage = 5;
+}
+
+$filteredAlerts = array_values(array_filter(
+    $attentionAlerts,
+    function ($alert) use ($level) {
+        if ($level === 'all') {
+            return true;
+        }
+
+        if ($level === 'high') {
+            return $alert['severity'] === 'danger';
+        }
+
+        return $alert['severity'] === 'warning';
+    }
+));
+
+$attentionCount = count($filteredAlerts);
+
+$totalPages = $perPage === 0
+    ? 1
+    : max(1, (int) ceil($attentionCount / $perPage));
+
+$requestedPage = filter_input(
+    INPUT_GET,
+    'page',
+    FILTER_VALIDATE_INT
+);
+
+$page = max(1, min(
+    $totalPages,
+    $requestedPage ?: 1
+));
+
+$visibleAlerts = $perPage === 0
+    ? $filteredAlerts
+    : array_slice(
+        $filteredAlerts,
+        ($page - 1) * $perPage,
+        $perPage
+    );
+
+function dashboardPageUrl(
+    int $page,
+    int $perPage,
+    string $level
+): string {
+    return 'dashboard.php?' . http_build_query([
+        'page' => $page,
+        'per_page' => $perPage,
+        'level' => $level
+    ]);
+}
 ?>
 
 <!doctype html>
@@ -287,6 +356,64 @@ $visibleAlerts = array_slice($attentionAlerts, ($page - 1) * 5, 5);
             text-align: center;
         }
 
+        .alert-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .filter-control {
+            display: grid;
+            gap: 6px;
+            color: var(--muted);
+            font-size: .78rem;
+            font-weight: 800;
+        }
+
+        .select-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .styled-select {
+            min-width: 165px;
+            min-height: 40px;
+            appearance: none;
+            padding: 8px 38px 8px 13px;
+            border: 1px solid #cbd5df;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: var(--ink);
+            font: inherit;
+            font-size: .84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .styled-select:hover {
+            border-color: var(--red);
+            background: #fff;
+        }
+
+        .styled-select:focus-visible {
+            outline: 3px solid rgba(23, 105, 170, .25);
+            border-color: var(--focus);
+        }
+
+        .select-wrap::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid #657384;
+            border-bottom: 2px solid #657384;
+            pointer-events: none;
+            transform: translateY(-65%) rotate(45deg);
+        }
+
         @media (max-width: 700px) {
             .welcome-banner {
                 padding: 22px;
@@ -351,6 +478,61 @@ $visibleAlerts = array_slice($attentionAlerts, ($page - 1) * 5, 5);
             <div class="alerts-heading">
                 <h2 id="alerts-heading">Alerts &amp; Actions</h2>
                 <p><?= $attentionCount ?> students require attention</p>
+                <form class="alert-filters" method="get">
+                    <label class="filter-control">
+                        <span>Display</span>
+
+                        <span class="select-wrap">
+                            <select
+                                class="styled-select"
+                                name="per_page"
+                                onchange="this.form.submit()"
+                            >
+                                <option value="5" <?= $perPage === 5 ? 'selected' : '' ?>>
+                                    5 students
+                                </option>
+
+                                <option value="10" <?= $perPage === 10 ? 'selected' : '' ?>>
+                                    10 students
+                                </option>
+
+                                <option value="20" <?= $perPage === 20 ? 'selected' : '' ?>>
+                                    20 students
+                                </option>
+
+                                <option value="0" <?= $perPage === 0 ? 'selected' : '' ?>>
+                                    All students
+                                </option>
+                            </select>
+                        </span>
+                    </label>
+
+                    <label class="filter-control">
+                        <span>Alert level</span>
+
+                        <span class="select-wrap">
+                            <select
+                                class="styled-select"
+                                name="level"
+                                onchange="this.form.submit()"
+                            >
+                                <option value="all" <?= $level === 'all' ? 'selected' : '' ?>>
+                                    All alerts
+                                </option>
+
+                                <option value="medium" <?= $level === 'medium' ? 'selected' : '' ?>>
+                                    Medium / Yellow
+                                </option>
+
+                                <option value="high" <?= $level === 'high' ? 'selected' : '' ?>>
+                                    High / Red
+                                </option>
+                            </select>
+                        </span>
+                    </label>
+
+                    <input type="hidden" name="page" value="1">
+                </form>
             </div>
 
             <?php if (!$visibleAlerts): ?>
@@ -420,9 +602,35 @@ $visibleAlerts = array_slice($attentionAlerts, ($page - 1) * 5, 5);
             <?php endif; ?>
         </section>
         <nav class="pagination" aria-label="Alert pages">
-            <?php if ($page > 1): ?><a class="button secondary" href="dashboard.php?page=<?= $page - 1 ?>#alerts-heading">Previous</a><?php else: ?><button class="button secondary" disabled>Previous</button><?php endif; ?>
-            <p>Page <?= $page ?> of <?= $totalPages ?></p>
-            <?php if ($page < $totalPages): ?><a class="button primary" href="dashboard.php?page=<?= $page + 1 ?>#alerts-heading">Next</a><?php else: ?><button class="button primary" disabled>Next</button><?php endif; ?>
+            <?php if ($page > 1): ?>
+                <a
+                    class="button secondary"
+                    href="<?= e(dashboardPageUrl($page - 1, $perPage, $level)) ?>#alerts-heading"
+                >
+                    Previous
+                </a>
+            <?php else: ?>
+                <button class="button secondary" disabled>
+                    Previous
+                </button>
+            <?php endif; ?>
+
+            <p>
+                Page <?= $page ?> of <?= $totalPages ?>
+            </p>
+
+            <?php if ($page < $totalPages): ?>
+                <a
+                    class="button primary"
+                    href="<?= e(dashboardPageUrl($page + 1, $perPage, $level)) ?>#alerts-heading"
+                >
+                    Next
+                </a>
+            <?php else: ?>
+                <button class="button primary" disabled>
+                    Next
+                </button>
+            <?php endif; ?>
         </nav>
     </main>
 </div>

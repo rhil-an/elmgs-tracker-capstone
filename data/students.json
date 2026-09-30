@@ -5,9 +5,11 @@
     "id": "B2500001",
     "name": "Sam Wilson",
     "nationality": "American",
-    "faculty": "Bachelor of Business (Hons)",
+    "faculty": "Master of Business",
     "lastCheckIn": "2026-09-20",
-    "visaExpiry": "2026-12-10"
+    "visaExpiry": "2026-12-10",
+    "postgraduateStayStartDate": "2025-10-01",
+    "postgraduateStayRequiredCompletionDate": "2026-10-01"
   },
   {
     "status": "Compliant",
@@ -15,9 +17,11 @@
     "id": "B2500002",
     "name": "Aisha Rahman",
     "nationality": "Bangladeshi",
-    "faculty": "Bachelor of Computer Science (Hons)",
+    "faculty": "Master of Computer Science",
     "lastCheckIn": "2026-09-18",
-    "visaExpiry": "2027-01-22"
+    "visaExpiry": "2027-01-22",
+    "postgraduateStayStartDate": "2025-12-15",
+    "postgraduateStayRequiredCompletionDate": "2026-12-15"
   },
   {
     "status": "Warning",
@@ -27,7 +31,9 @@
     "nationality": "Chinese",
     "faculty": "Master of Data Science",
     "lastCheckIn": "2026-08-02",
-    "visaExpiry": "2026-10-18"
+    "visaExpiry": "2026-10-18",
+    "postgraduateStayStartDate": "2026-03-15",
+    "postgraduateStayRequiredCompletionDate": "2027-03-15"
   },
   {
     "status": "Non-Compliant",
@@ -37,7 +43,9 @@
     "nationality": "Iranian",
     "faculty": "MBA Business Administration",
     "lastCheckIn": "2026-07-14",
-    "visaExpiry": "2026-09-05"
+    "visaExpiry": "2026-09-05",
+    "postgraduateStayStartDate": "2026-06-15",
+    "postgraduateStayRequiredCompletionDate": "2027-06-15"
   },
   {
     "status": "Compliant",
@@ -45,9 +53,11 @@
     "id": "B2500005",
     "name": "Amara Diallo",
     "nationality": "Senegalese",
-    "faculty": "Bachelor of International Business",
+    "faculty": "Master of International Business",
     "lastCheckIn": "2026-09-21",
-    "visaExpiry": "2027-02-12"
+    "visaExpiry": "2027-02-12",
+    "postgraduateStayStartDate": "2025-11-01",
+    "postgraduateStayRequiredCompletionDate": "2026-11-01"
   },
   {
     "status": "Warning",
@@ -55,9 +65,11 @@
     "id": "B2500006",
     "name": "Nhat Minh Tran",
     "nationality": "Vietnamese",
-    "faculty": "Bachelor of Psychology (Hons)",
+    "faculty": "Master of Psychology",
     "lastCheckIn": "2026-08-08",
-    "visaExpiry": "2026-10-06"
+    "visaExpiry": "2026-10-06",
+    "postgraduateStayStartDate": "2025-12-01",
+    "postgraduateStayRequiredCompletionDate": "2026-12-01"
   },
   {
     "status": "Compliant",
@@ -65,9 +77,11 @@
     "id": "B2500007",
     "name": "Priya Nair",
     "nationality": "Indian",
-    "faculty": "Bachelor of Laws (Hons)",
+    "faculty": "Master of Laws",
     "lastCheckIn": "2026-09-19",
-    "visaExpiry": "2027-03-28"
+    "visaExpiry": "2027-03-28",
+    "postgraduateStayStartDate": "2026-01-15",
+    "postgraduateStayRequiredCompletionDate": "2027-01-15"
   },
   {
     "status": "Non-Compliant",
@@ -77,7 +91,9 @@
     "nationality": "Nigerian",
     "faculty": "Master of Project Management",
     "lastCheckIn": "2026-07-01",
-    "visaExpiry": "2026-08-30"
+    "visaExpiry": "2026-08-30",
+    "postgraduateStayStartDate": "2026-07-01",
+    "postgraduateStayRequiredCompletionDate": "2027-07-01"
   },
   {
     "status": "Compliant",
@@ -85,9 +101,11 @@
     "id": "B2500009",
     "name": "Siti Nur Amani",
     "nationality": "Indonesian",
-    "faculty": "Bachelor of Accounting (Hons)",
+    "faculty": "Master of Accounting",
     "lastCheckIn": "2026-09-22",
-    "visaExpiry": "2027-01-15"
+    "visaExpiry": "2027-01-15",
+    "postgraduateStayStartDate": "2025-10-15",
+    "postgraduateStayRequiredCompletionDate": "2026-10-15"
   },
   {
     "status": "Warning",
@@ -95,9 +113,11 @@
     "id": "B2500010",
     "name": "Maria Santos",
     "nationality": "Filipino",
-    "faculty": "Bachelor of Hospitality and Tourism Management",
+    "faculty": "Master of Hospitality and Tourism Management",
     "lastCheckIn": "2026-08-16",
-    "visaExpiry": "2026-10-20"
+    "visaExpiry": "2026-10-20",
+    "postgraduateStayStartDate": "2026-04-01",
+    "postgraduateStayRequiredCompletionDate": "2027-04-01"
   },
   {
     "status": "Compliant",
@@ -107,7 +127,9 @@
     "nationality": "Thai",
     "faculty": "Master of Education",
     "lastCheckIn": "2026-09-12",
-    "visaExpiry": "2027-04-09"
+    "visaExpiry": "2027-04-09",
+    "postgraduateStayStartDate": "2025-10-01",
+    "postgraduateStayRequiredCompletionDate": "2026-10-01"
   },
   {
     "status": "Compliant",
@@ -115,9 +137,11 @@
     "id": "B2500012",
     "name": "Liam O'Connor",
     "nationality": "Irish",
-    "faculty": "Bachelor of Communication (Hons)",
+    "faculty": "Master of Communication",
     "lastCheckIn": "2026-09-20",
-    "visaExpiry": "2026-11-24"
+    "visaExpiry": "2026-11-24",
+    "postgraduateStayStartDate": "2025-12-15",
+    "postgraduateStayRequiredCompletionDate": "2026-12-15"
   },
   {
     "status": "Non-Compliant",
@@ -125,9 +149,11 @@
     "id": "B2500013",
     "name": "Grace Mutesi",
     "nationality": "Ugandan",
-    "faculty": "Bachelor of Business Analytics (Hons)",
+    "faculty": "Master of Business Analytics",
     "lastCheckIn": "2026-07-10",
-    "visaExpiry": "2026-09-14"
+    "visaExpiry": "2026-09-14",
+    "postgraduateStayStartDate": "2026-03-15",
+    "postgraduateStayRequiredCompletionDate": "2027-03-15"
   },
   {
     "status": "Warning",
@@ -135,9 +161,11 @@
     "id": "B2500014",
     "name": "Nguyen Thi Lan",
     "nationality": "Vietnamese",
-    "faculty": "Bachelor of Biomedical Science (Hons)",
+    "faculty": "Master of Biomedical Science",
     "lastCheckIn": "2026-08-01",
-    "visaExpiry": "2026-10-11"
+    "visaExpiry": "2026-10-11",
+    "postgraduateStayStartDate": "2026-06-15",
+    "postgraduateStayRequiredCompletionDate": "2027-06-15"
   },
   {
     "status": "Compliant",
@@ -147,7 +175,9 @@
     "nationality": "Bhutanese",
     "faculty": "Master of International Relations",
     "lastCheckIn": "2026-09-17",
-    "visaExpiry": "2027-05-05"
+    "visaExpiry": "2027-05-05",
+    "postgraduateStayStartDate": "2025-11-01",
+    "postgraduateStayRequiredCompletionDate": "2026-11-01"
   },
   {
     "status": "Compliant",
@@ -155,9 +185,11 @@
     "id": "B2500016",
     "name": "Sofía Martínez",
     "nationality": "Mexican",
-    "faculty": "Bachelor of Design (Hons)",
+    "faculty": "Master of Design",
     "lastCheckIn": "2026-09-23",
-    "visaExpiry": "2027-02-19"
+    "visaExpiry": "2027-02-19",
+    "postgraduateStayStartDate": "2025-12-01",
+    "postgraduateStayRequiredCompletionDate": "2026-12-01"
   },
   {
     "status": "Warning",
@@ -165,9 +197,11 @@
     "id": "B2500017",
     "name": "Hassan Ali",
     "nationality": "Pakistani",
-    "faculty": "Bachelor of Mechanical Engineering (Hons)",
+    "faculty": "Master of Mechanical Engineering",
     "lastCheckIn": "2026-08-11",
-    "visaExpiry": "2026-10-03"
+    "visaExpiry": "2026-10-03",
+    "postgraduateStayStartDate": "2026-01-15",
+    "postgraduateStayRequiredCompletionDate": "2027-01-15"
   },
   {
     "status": "Non-Compliant",
@@ -175,9 +209,11 @@
     "id": "B2500018",
     "name": "Kofi Mensah",
     "nationality": "Ghanaian",
-    "faculty": "Bachelor of Economics (Hons)",
+    "faculty": "Master of Economics",
     "lastCheckIn": "2026-07-05",
-    "visaExpiry": "2026-08-27"
+    "visaExpiry": "2026-08-27",
+    "postgraduateStayStartDate": "2026-07-01",
+    "postgraduateStayRequiredCompletionDate": "2027-07-01"
   },
   {
     "status": "Compliant",
@@ -187,7 +223,9 @@
     "nationality": "Japanese",
     "faculty": "Master of Applied Finance",
     "lastCheckIn": "2026-09-19",
-    "visaExpiry": "2027-06-12"
+    "visaExpiry": "2027-06-12",
+    "postgraduateStayStartDate": "2025-10-15",
+    "postgraduateStayRequiredCompletionDate": "2026-10-15"
   },
   {
     "status": "Compliant",
@@ -195,9 +233,11 @@
     "id": "B2500020",
     "name": "Rania Haddad",
     "nationality": "Jordanian",
-    "faculty": "Bachelor of Information Technology (Hons)",
+    "faculty": "Master of Information Technology",
     "lastCheckIn": "2026-09-15",
-    "visaExpiry": "2026-12-20"
+    "visaExpiry": "2026-12-20",
+    "postgraduateStayStartDate": "2026-04-01",
+    "postgraduateStayRequiredCompletionDate": "2027-04-01"
   },
   {
     "status": "Warning",
@@ -205,9 +245,11 @@
     "id": "B2500021",
     "name": "Budi Santoso",
     "nationality": "Indonesian",
-    "faculty": "Bachelor of Marketing (Hons)",
+    "faculty": "Master of Marketing",
     "lastCheckIn": "2026-08-09",
-    "visaExpiry": "2026-10-25"
+    "visaExpiry": "2026-10-25",
+    "postgraduateStayStartDate": "2025-10-01",
+    "postgraduateStayRequiredCompletionDate": "2026-10-01"
   },
   {
     "status": "Compliant",
@@ -215,9 +257,11 @@
     "id": "B2500022",
     "name": "Chisom Eze",
     "nationality": "Nigerian",
-    "faculty": "Bachelor of Psychology (Hons)",
+    "faculty": "Master of Psychology",
     "lastCheckIn": "2026-09-21",
-    "visaExpiry": "2027-02-04"
+    "visaExpiry": "2027-02-04",
+    "postgraduateStayStartDate": "2025-12-15",
+    "postgraduateStayRequiredCompletionDate": "2026-12-15"
   },
   {
     "status": "Non-Compliant",
@@ -227,7 +271,9 @@
     "nationality": "Pakistani",
     "faculty": "Master of Cyber Security",
     "lastCheckIn": "2026-07-02",
-    "visaExpiry": "2026-09-08"
+    "visaExpiry": "2026-09-08",
+    "postgraduateStayStartDate": "2026-03-15",
+    "postgraduateStayRequiredCompletionDate": "2027-03-15"
   },
   {
     "status": "Compliant",
@@ -235,9 +281,11 @@
     "id": "B2500024",
     "name": "Zara Williams",
     "nationality": "British",
-    "faculty": "Bachelor of Mass Communication (Hons)",
+    "faculty": "Master of Mass Communication",
     "lastCheckIn": "2026-09-18",
-    "visaExpiry": "2027-03-17"
+    "visaExpiry": "2027-03-17",
+    "postgraduateStayStartDate": "2026-06-15",
+    "postgraduateStayRequiredCompletionDate": "2027-06-15"
   },
   {
     "status": "Warning",
@@ -245,9 +293,11 @@
     "id": "B2500025",
     "name": "Minh Anh Pham",
     "nationality": "Vietnamese",
-    "faculty": "Bachelor of Software Engineering (Hons)",
+    "faculty": "Master of Software Engineering",
     "lastCheckIn": "2026-08-04",
-    "visaExpiry": "2026-10-15"
+    "visaExpiry": "2026-10-15",
+    "postgraduateStayStartDate": "2025-11-01",
+    "postgraduateStayRequiredCompletionDate": "2026-11-01"
   },
   {
     "status": "Compliant",
@@ -255,9 +305,11 @@
     "id": "B2500026",
     "name": "Evelyn Wanjiku",
     "nationality": "Kenyan",
-    "faculty": "Bachelor of Finance (Hons)",
+    "faculty": "Master of Finance",
     "lastCheckIn": "2026-09-20",
-    "visaExpiry": "2027-01-27"
+    "visaExpiry": "2027-01-27",
+    "postgraduateStayStartDate": "2025-12-01",
+    "postgraduateStayRequiredCompletionDate": "2026-12-01"
   },
   {
     "status": "Compliant",
@@ -267,7 +319,9 @@
     "nationality": "Colombian",
     "faculty": "Master of Business Administration",
     "lastCheckIn": "2026-09-16",
-    "visaExpiry": "2027-05-11"
+    "visaExpiry": "2027-05-11",
+    "postgraduateStayStartDate": "2026-01-15",
+    "postgraduateStayRequiredCompletionDate": "2027-01-15"
   },
   {
     "status": "Non-Compliant",
@@ -275,9 +329,11 @@
     "id": "B2500028",
     "name": "Sokha Chea",
     "nationality": "Cambodian",
-    "faculty": "Bachelor of Architecture (Hons)",
+    "faculty": "Master of Architecture",
     "lastCheckIn": "2026-07-06",
-    "visaExpiry": "2026-08-31"
+    "visaExpiry": "2026-08-31",
+    "postgraduateStayStartDate": "2026-07-01",
+    "postgraduateStayRequiredCompletionDate": "2027-07-01"
   },
   {
     "status": "Warning",
@@ -285,9 +341,11 @@
     "id": "B2500029",
     "name": "Omar Farouk",
     "nationality": "Egyptian",
-    "faculty": "Bachelor of Electrical Engineering (Hons)",
+    "faculty": "Master of Electrical Engineering",
     "lastCheckIn": "2026-08-12",
-    "visaExpiry": "2026-10-08"
+    "visaExpiry": "2026-10-08",
+    "postgraduateStayStartDate": "2025-10-15",
+    "postgraduateStayRequiredCompletionDate": "2026-10-15"
   },
   {
     "status": "Compliant",
@@ -295,9 +353,11 @@
     "id": "B2500030",
     "name": "Hana Kim",
     "nationality": "South Korean",
-    "faculty": "Bachelor of Early Childhood Education (Hons)",
+    "faculty": "Master of Early Childhood Education",
     "lastCheckIn": "2026-09-14",
-    "visaExpiry": "2027-04-02"
+    "visaExpiry": "2027-04-02",
+    "postgraduateStayStartDate": "2026-04-01",
+    "postgraduateStayRequiredCompletionDate": "2027-04-01"
   },
   {
     "status": "Compliant",
@@ -305,9 +365,11 @@
     "id": "B2500031",
     "name": "Bola Adeyemi",
     "nationality": "Nigerian",
-    "faculty": "Bachelor of Business (Hons)",
+    "faculty": "Master of Business",
     "lastCheckIn": "2026-09-22",
-    "visaExpiry": "2026-11-29"
+    "visaExpiry": "2026-11-29",
+    "postgraduateStayStartDate": "2025-10-01",
+    "postgraduateStayRequiredCompletionDate": "2026-10-01"
   },
   {
     "status": "Warning",
@@ -317,7 +379,9 @@
     "nationality": "Indian",
     "faculty": "Master of Data Science",
     "lastCheckIn": "2026-08-07",
-    "visaExpiry": "2026-10-14"
+    "visaExpiry": "2026-10-14",
+    "postgraduateStayStartDate": "2025-12-15",
+    "postgraduateStayRequiredCompletionDate": "2026-12-15"
   },
   {
     "status": "Compliant",
@@ -325,9 +389,11 @@
     "id": "B2500033",
     "name": "Nurul Huda",
     "nationality": "Indonesian",
-    "faculty": "Bachelor of Law (Hons)",
+    "faculty": "Master of Law",
     "lastCheckIn": "2026-09-17",
-    "visaExpiry": "2027-02-16"
+    "visaExpiry": "2027-02-16",
+    "postgraduateStayStartDate": "2026-03-15",
+    "postgraduateStayRequiredCompletionDate": "2027-03-15"
   },
   {
     "status": "Non-Compliant",
@@ -335,9 +401,11 @@
     "id": "B2500034",
     "name": "Peter Mwangi",
     "nationality": "Kenyan",
-    "faculty": "Bachelor of Computer Science (Hons)",
+    "faculty": "Master of Computer Science",
     "lastCheckIn": "2026-07-03",
-    "visaExpiry": "2026-08-29"
+    "visaExpiry": "2026-08-29",
+    "postgraduateStayStartDate": "2026-06-15",
+    "postgraduateStayRequiredCompletionDate": "2027-06-15"
   },
   {
     "status": "Compliant",
@@ -347,7 +415,9 @@
     "nationality": "Russian",
     "faculty": "Master of Education",
     "lastCheckIn": "2026-09-11",
-    "visaExpiry": "2027-06-25"
+    "visaExpiry": "2027-06-25",
+    "postgraduateStayStartDate": "2025-11-01",
+    "postgraduateStayRequiredCompletionDate": "2026-11-01"
   },
   {
     "status": "Warning",
@@ -355,9 +425,11 @@
     "id": "B2500036",
     "name": "Tariq Mahmood",
     "nationality": "Pakistani",
-    "faculty": "Bachelor of Accounting (Hons)",
+    "faculty": "Master of Accounting",
     "lastCheckIn": "2026-08-10",
-    "visaExpiry": "2026-10-12"
+    "visaExpiry": "2026-10-12",
+    "postgraduateStayStartDate": "2025-12-01",
+    "postgraduateStayRequiredCompletionDate": "2026-12-01"
   },
   {
     "status": "Compliant",
@@ -365,9 +437,11 @@
     "id": "B2500037",
     "name": "Linh Hoang",
     "nationality": "Vietnamese",
-    "faculty": "Bachelor of Biomedical Science (Hons)",
+    "faculty": "Master of Biomedical Science",
     "lastCheckIn": "2026-09-20",
-    "visaExpiry": "2027-01-09"
+    "visaExpiry": "2027-01-09",
+    "postgraduateStayStartDate": "2026-01-15",
+    "postgraduateStayRequiredCompletionDate": "2027-01-15"
   },
   {
     "status": "Compliant",
@@ -375,9 +449,11 @@
     "id": "B2500038",
     "name": "Olivia Brown",
     "nationality": "Australian",
-    "faculty": "Bachelor of Communication (Hons)",
+    "faculty": "Master of Communication",
     "lastCheckIn": "2026-09-13",
-    "visaExpiry": "2027-04-22"
+    "visaExpiry": "2027-04-22",
+    "postgraduateStayStartDate": "2026-07-01",
+    "postgraduateStayRequiredCompletionDate": "2027-07-01"
   },
   {
     "status": "Non-Compliant",
@@ -387,7 +463,9 @@
     "nationality": "Bangladeshi",
     "faculty": "Master of Project Management",
     "lastCheckIn": "2026-07-08",
-    "visaExpiry": "2026-09-05"
+    "visaExpiry": "2026-09-05",
+    "postgraduateStayStartDate": "2025-10-15",
+    "postgraduateStayRequiredCompletionDate": "2026-10-15"
   },
   {
     "status": "Compliant",
@@ -395,8 +473,10 @@
     "id": "B2500040",
     "name": "Valentina Rossi",
     "nationality": "Italian",
-    "faculty": "Bachelor of Design (Hons)",
+    "faculty": "Master of Design",
     "lastCheckIn": "2026-09-21",
-    "visaExpiry": "2027-03-08"
+    "visaExpiry": "2027-03-08",
+    "postgraduateStayStartDate": "2026-04-01",
+    "postgraduateStayRequiredCompletionDate": "2027-04-01"
   }
 ]

@@ -19,12 +19,14 @@ function initials(string $name): string
     return $letters;
 }
 
+date_default_timezone_set('Asia/Kuala_Lumpur');
 $today = new DateTimeImmutable('today');
 $attentionAlerts = [];
 
 foreach ($students as $student) {
     $reasons = [];
     $severity = 'warning';
+    $daysUntilExpiry = PHP_INT_MAX;
 
     if (($student['status'] ?? '') === 'Non-Compliant') {
         $severity = 'danger';
@@ -45,26 +47,35 @@ foreach ($students as $student) {
         }
     }
 
-    if (($student['currentLocation'] ?? '') === 'Overseas') {
-        $reasons[] = 'Student is currently overseas';
-    }
+
+
+    $checkinDays = max(0, (int)(new DateTimeImmutable($student['lastCheckIn']))->diff($today)->format('%r%a'));
+    if ($checkinDays > 30) { $reasons[] = 'Check-in is overdue'; }
 
     if ($reasons) {
         $attentionAlerts[] = [
             'student' => $student,
             'severity' => $severity,
-            'reasons' => $reasons
+            'reasons' => $reasons,
+            'visaDays' => $daysUntilExpiry ?? PHP_INT_MAX,
+            'checkinDays' => $checkinDays
         ];
     }
 }
 
 usort($attentionAlerts, function ($a, $b) {
     $priority = ['danger' => 1, 'warning' => 2];
-    return $priority[$a['severity']] <=> $priority[$b['severity']];
+    return ($priority[$a['severity']] <=> $priority[$b['severity']])
+        ?: ($a['visaDays'] <=> $b['visaDays'])
+        ?: ($b['checkinDays'] <=> $a['checkinDays'])
+        ?: strcmp($a['student']['id'], $b['student']['id']);
 });
 
-$visibleAlerts = array_slice($attentionAlerts, 0, 5);
 $attentionCount = count($attentionAlerts);
+$totalPages = max(1, (int)ceil($attentionCount / 5));
+$requestedPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+$page = max(1, min($totalPages, $requestedPage ?: 1));
+$visibleAlerts = array_slice($attentionAlerts, ($page - 1) * 5, 5);
 ?>
 
 <!doctype html>
@@ -300,39 +311,19 @@ $attentionCount = count($attentionAlerts);
 
 <body>
 <div class="app-shell">
-    <aside class="sidebar" aria-label="Application navigation">
+    <header class="topbar">
+      <div class="topbar-inner">
         <a class="brand" href="dashboard.php" aria-label="ICompliance dashboard">
-            <span class="brand-mark" aria-hidden="true">I</span>
-            <span>ICompliance</span>
+          <span class="brand-mark" aria-hidden="true">I</span>
+          <span class="brand-name">ICompliance</span>
         </a>
-
-        <div class="office-name">
-            <strong>HELP University</strong>
-            <span>International Student Office</span>
-        </div>
-
+        <span class="office-name">HELP University <span>International Student Office</span></span>
         <nav class="navigation" aria-label="Primary navigation">
-            <a class="nav-link active" href="dashboard.php" aria-current="page">
-                <span aria-hidden="true">▦</span>
-                Dashboard
-            </a>
-
-            <a class="nav-link" href="index.php">
-                <span aria-hidden="true">◷</span>
-                Student Records
-            </a>
-
-            <a class="nav-link" href="index.php#records">
-                <span aria-hidden="true">◫</span>
-                Visa Monitoring
-            </a>
+          <a class="nav-link active" href="dashboard.php" aria-current="page">Dashboard</a>
+          <a class="nav-link" href="student-records.php">Student Records</a>
         </nav>
-
-        <p class="sidebar-note">
-            Local prototype<br>
-            <span>Administrator dashboard</span>
-        </p>
-    </aside>
+      </div>
+    </header>
 
     <main class="content dashboard-content" id="main-content">
         <header class="page-header">
@@ -349,11 +340,11 @@ $attentionCount = count($attentionAlerts);
 
         <section class="welcome-banner" aria-labelledby="welcome-heading">
             <div>
-                <h2 id="welcome-heading">Welcome, Sian Ying!</h2>
+                <h2 id="welcome-heading">Welcome, Administrator!</h2>
                 <p>Here is the latest compliance activity requiring your attention.</p>
             </div>
 
-            <div class="welcome-mark" aria-hidden="true">SY</div>
+            <div class="welcome-mark" aria-hidden="true">A</div>
         </section>
 
         <section class="alerts-section" aria-labelledby="alerts-heading">
@@ -409,9 +400,9 @@ $attentionCount = count($attentionAlerts);
                             <div class="alert-actions">
                                 <a
                                     class="dashboard-button primary"
-                                    href="student.php?id=<?= urlencode($student['id']) ?>"
+                                    href="student-profile.php?id=<?= urlencode($student['id']) ?>"
                                 >
-                                    Take Action
+                                    View Profile
                                 </a>
 
                                 <button
@@ -428,6 +419,11 @@ $attentionCount = count($attentionAlerts);
                 </div>
             <?php endif; ?>
         </section>
+        <nav class="pagination" aria-label="Alert pages">
+            <?php if ($page > 1): ?><a class="button secondary" href="dashboard.php?page=<?= $page - 1 ?>#alerts-heading">Previous</a><?php else: ?><button class="button secondary" disabled>Previous</button><?php endif; ?>
+            <p>Page <?= $page ?> of <?= $totalPages ?></p>
+            <?php if ($page < $totalPages): ?><a class="button primary" href="dashboard.php?page=<?= $page + 1 ?>#alerts-heading">Next</a><?php else: ?><button class="button primary" disabled>Next</button><?php endif; ?>
+        </nav>
     </main>
 </div>
 </body>

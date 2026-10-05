@@ -9,17 +9,7 @@
   let page = 1;
   const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#039;', '"':'&quot;' }[char]));
   const dateText = (isoDate) => new Intl.DateTimeFormat('en-GB', { day:'2-digit', month:'short', year:'numeric' }).format(new Date(`${isoDate}T00:00:00`));
-  const startOfToday = () => { const today = new Date(); return new Date(today.getFullYear(), today.getMonth(), today.getDate()); };
-  const daysBetween = (from, to) => Math.round((to - from) / 86400000);
-  const REQUIRED_POSTGRADUATE_STAY_DAYS = 365;
-  const complianceProgress = (student) => {
-    const today = startOfToday();
-    const stayStart = new Date(`${student.postgraduateStayStartDate}T00:00:00`);
-    const daysStayed = Math.max(0, daysBetween(stayStart, today));
-    const score = Math.min(100, Math.round((daysStayed / REQUIRED_POSTGRADUATE_STAY_DAYS) * 100));
-    const tone = score >= 70 ? 'green' : score >= 40 ? 'amber' : 'red';
-    return { score, tone };
-  };
+  const complianceProgress = student => ({ ...student.stay_progress, score: student.stay_progress.bar_percentage, tone: 'green' });
   const filtered = () => {
     const query = elements.search.value.trim().toLocaleLowerCase();
     return students.filter(student => (!query || [student.name, student.id, student.nationality].some(value => value.toLocaleLowerCase().includes(query))) && (!elements.status.value || student.status === elements.status.value) && (!elements.faculty.value || student.faculty === elements.faculty.value));
@@ -29,7 +19,7 @@
     const visible = matches.slice((page - 1) * pageSize, page * pageSize);
     elements.body.innerHTML = visible.map(student => {
       const progress = complianceProgress(student);
-      return `<tr class="data-row"><td><span class="student-name">${escapeHtml(student.name)}</span><span class="student-meta">${escapeHtml(student.id)} · ${escapeHtml(student.nationality)}</span></td><td class="faculty">${escapeHtml(student.faculty)}</td><td class="date">${dateText(student.visaExpiry)}</td><td class="date">${dateText(student.lastCheckIn)}</td><td><span class="badge badge-${student.status.toLocaleLowerCase().replace(/[^a-z]+/g,'-')}">${escapeHtml(student.status)}</span></td><td class="location">${escapeHtml(student.currentLocation)}</td><td><div class="progress-cell"><div class="progress-track" role="progressbar" aria-label="Compliance progress for ${escapeHtml(student.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.score}" aria-valuetext="${progress.score}% compliance progress"><span class="progress-fill progress-${progress.tone}" style="width:${progress.score}%"></span></div><span class="progress-label" aria-hidden="true">${progress.score}%</span></div></td><td class="table-action"><a class="view-link" href="student-profile.php?id=${encodeURIComponent(student.id)}" aria-label="View profile for ${escapeHtml(student.name)}">View<span aria-hidden="true"> →</span></a></td></tr>`;
+      return `<tr class="data-row"><td><span class="student-name">${escapeHtml(student.name)}</span><span class="student-meta">${escapeHtml(student.id)} · ${escapeHtml(student.nationality)}</span></td><td class="faculty">${escapeHtml(student.faculty)}</td><td class="date">${dateText(student.visaExpiry)}</td><td class="date">${dateText(student.lastCheckIn)}</td><td><span class="badge badge-${student.status.toLocaleLowerCase().replace(/[^a-z]+/g,'-')}">${escapeHtml(student.status)}</span></td><td><span class="badge location-${student.currentLocation === 'Local' ? 'local' : 'overseas'}">${escapeHtml(student.currentLocation)}</span></td><td><div class="progress-cell"><div class="progress-track" role="progressbar" aria-label="Verified stay progress for ${escapeHtml(student.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.score}" aria-valuetext="${progress.verified_days} verified days, ${progress.required_days} required days, ${progress.remaining_days} remaining days, ${progress.percentage}%"><span class="progress-fill progress-${progress.tone}" style="width:${progress.score}%"></span></div><span class="progress-label" aria-hidden="true">${progress.percentage}% · ${progress.verified_days}/${progress.required_days} days · ${progress.remaining_days} remaining</span></div></td><td class="table-action"><a class="view-link" href="student-profile.php?id=${encodeURIComponent(student.id)}" aria-label="View profile for ${escapeHtml(student.name)}">View<span aria-hidden="true"> →</span></a></td></tr>`;
     }).join('');
     elements.count.textContent = `${matches.length} ${matches.length === 1 ? 'record' : 'records'} found`;
     elements.empty.hidden = matches.length !== 0; elements.previous.disabled = page === 1; elements.next.disabled = page === totalPages || matches.length === 0;

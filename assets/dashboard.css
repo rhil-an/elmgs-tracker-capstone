@@ -1,0 +1,27 @@
+.pending-section { margin-bottom:28px; }
+.review-table-scroll { max-width:100%; overflow-x:auto; margin-top:20px; }
+.review-table { width:100%; min-width:720px; border-collapse:collapse; text-align:left; }
+.review-table th { background:#f4f7fa; color:var(--muted); font-size:.82rem; }
+.review-table th,.review-table td { padding:18px 16px; border-bottom:1px solid var(--line); vertical-align:middle; }
+.review-student-link { display:inline-block; padding:7px 10px; border-radius:6px; background:#e7effc; color:#172f5c; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
+.review-stamp { display:block; width:220px; height:125px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#f8fafc; margin:6px 0; }
+.review-tally { display:flex; flex-wrap:wrap; align-items:center; gap:8px; max-width:330px; }
+.review-tally .button { white-space:nowrap; }
+.review-table tr:target { outline:3px solid var(--focus); outline-offset:-3px; }
+.review-approved { color:var(--green); background:var(--green-bg); }
+.review-resubmit { color:var(--amber); background:var(--amber-bg); }
+[data-review-error] { color:var(--danger); }
+.review-card { scroll-margin-top:20px; overflow-wrap:anywhere; }
+.review-card:target { outline:3px solid var(--focus); outline-offset:3px; }
+.review-buttons { display:flex; flex-wrap:wrap; gap:12px; }
+.review-evidence details { margin:12px 0; padding:12px; border:1px solid var(--line); border-radius:8px; }
+.review-evidence summary { cursor:pointer; font-weight:700; }
+.evidence-preview { display:block; width:100%; max-width:700px; height:360px; object-fit:contain; border:1px solid var(--line); margin-top:12px; }
+.alert-card.info { border-left-color:var(--focus); background:#eff6ff; }
+.alert-card.warning { background:var(--amber-bg); }
+.alert-card.danger { background:var(--danger-bg); }
+.badge-pending { background:#dbeafe; color:#174b83; }
+.success-message { padding:12px; background:var(--green-bg); color:var(--green); border:1px solid var(--green); border-radius:8px; }
+.alert-info,.alert-student { min-width:0; overflow-wrap:anywhere; }
+.dashboard-button:focus-visible,summary:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+@media(max-width:700px) { .evidence-preview { height:260px; } .review-card { padding:16px; } }

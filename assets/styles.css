@@ -5,6 +5,14 @@
     --muted: #657384;
     --page: #f4f6f8;
     --surface: #ffffff;
+    --line: #d3dbe4;
+    --focus: #1769aa;
+    --green: #21663c;
+    --green-bg: #eaf7ee;
+    --amber: #855400;
+    --amber-bg: #fff6dc;
+    --danger: #ac2034;
+    --danger-bg: #fff0f2;
 }
 * { box-sizing:border-box; }
 html { overflow-x:hidden; background:var(--page); }
@@ -35,3 +43,14 @@ body { margin:0; min-width:320px; overflow-x:hidden; color:var(--ink); backgroun
 .pagination a { display:inline-flex; align-items:center; text-decoration:none; }
 .dashboard-button:disabled { opacity:.5; cursor:not-allowed; }
 .dashboard-button:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+
+/* Location, review decisions and compliance retain distinct text labels. */
+.location-local,.submission-verified{background:#e8f5ec;color:#176338}
+.location-overseas,.submission-rejected{background:#fdecef;color:#a51e35}
+.submission-pending{background:#fff3d9;color:#805000}
+.saved-history{padding:16px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.saved-history h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.history-evidence{display:block;padding:8px 0}
+@media(max-width:600px){.saved-history .detail-list>div{display:block}.saved-history dd{margin:4px 0 12px}}
+.stay-progress{width:100%;padding:20px;background:white;border:1px solid var(--line);border-radius:12px;margin:16px 0}.stay-progress h2{font-size:1.1rem}.stay-progress p{overflow-wrap:anywhere}.stay-track{height:12px;background:#e3e8ed;border-radius:8px;overflow:hidden}.stay-track span{display:block;height:100%;background:#27854d}.progress-label{white-space:normal}.progress-cell{flex-wrap:wrap}.stay-progress{box-sizing:border-box}
+.profile-hero .stay-progress{grid-column:1 / -1;color:var(--ink)}

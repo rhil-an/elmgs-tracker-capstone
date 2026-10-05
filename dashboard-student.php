@@ -1,29 +1,9 @@
 <?php
 declare(strict_types=1);
 
-date_default_timezone_set('Asia/Kuala_Lumpur');
-
-$students = json_decode(
-    file_get_contents(__DIR__ . '/data/students.json'),
-    true,
-    512,
-    JSON_THROW_ON_ERROR
-);
-
-/*
- * Prototype student account.
- * Later, this should come from the logged-in student's session.
- */
-$studentId = 'B2500004';
-
-$student = null;
-
-foreach ($students as $record) {
-    if (($record['id'] ?? '') === $studentId) {
-        $student = $record;
-        break;
-    }
-}
+require __DIR__ . '/app/progress.php';
+$student = session_student();
+$studentId = $student['id'];
 
 function e(string $value): string
 {
@@ -77,39 +57,7 @@ $statusClass = match ($student['status']) {
     default => 'badge-compliant'
 };
 
-/*
- * Dummy submission history for prototype purposes.
- */
-$submissionHistory = [
-    [
-        'date' => '22 Sep 2026',
-        'type' => 'Monthly Check-in Declaration',
-        'description' => 'September online check-in submission',
-        'status' => 'Approved',
-        'class' => 'badge-compliant'
-    ],
-    [
-        'date' => '18 Aug 2026',
-        'type' => 'Travel Declaration',
-        'description' => 'Travel declaration for overseas movement',
-        'status' => 'Approved',
-        'class' => 'badge-compliant'
-    ],
-    [
-        'date' => '12 Jul 2026',
-        'type' => 'Supporting Document',
-        'description' => 'Uploaded travel supporting document',
-        'status' => 'Needs Review',
-        'class' => 'badge-warning'
-    ],
-    [
-        'date' => '20 Jun 2026',
-        'type' => 'Monthly Check-in Declaration',
-        'description' => 'June online check-in submission',
-        'status' => 'Approved',
-        'class' => 'badge-compliant'
-    ]
-];
+$submissionHistory = submission_history($studentId);
 ?>
 
 <!doctype html>
@@ -348,7 +296,7 @@ $submissionHistory = [
                 >
                     Submission History
                 </a>
-            </nav>
+            <?php echo logout_control(); ?></nav>
         </div>
     </header>
 
@@ -425,7 +373,8 @@ $submissionHistory = [
             <span class="badge profile-badge <?= $statusClass ?>">
                 <?= e($student['status']) ?>
             </span>
-        </section>
+        <?= stay_progress_html(student_stay_progress($studentId)) ?>
+</section>
 
         <section
             class="profile-grid student-summary"
@@ -453,7 +402,7 @@ $submissionHistory = [
                 </p>
 
                 <p class="summary-note">
-                    Based on your latest submission
+                    Based on your latest verified check-in
                 </p>
             </article>
 
@@ -516,26 +465,32 @@ $submissionHistory = [
                         </thead>
 
                         <tbody>
-                        <?php foreach ($submissionHistory as $submission): ?>
+                        <?php if (!$submissionHistory): ?><tr><td colspan="4">No submissions yet.</td></tr><?php endif; ?>
+<?php foreach ($submissionHistory as $submission): ?>
                             <tr>
                                 <td class="submission-date">
-                                    <?= e($submission['date']) ?>
+                                    <?= e((new DateTimeImmutable($submission['submitted_at']))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y H:i')) ?>
                                 </td>
 
                                 <td>
-                                    <?= e($submission['type']) ?>
+                                    <?= e(match ($submission['kind']) { 'CheckIn'=>'Location check-in', 'Entry'=>'Entry declaration', default=>'Exit declaration' } . ' · '.$submission['start_date'].' → '.$submission['end_date']) ?>
                                 </td>
 
                                 <td>
-                                    <?= e($submission['description']) ?>
+                                    <?= e($submission['country'].' · '.$submission['location_details'].' · '.$submission['remarks'].' · '.($submission['review_remarks'] ?? 'Awaiting review')) ?>
+<?php if ($submission['reviewed_at']): ?><p>Reviewed <?= e((new DateTimeImmutable($submission['reviewed_at']))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y H:i')) ?></p><?php endif; ?>
+<?php if ($submission['resubmission_of']): ?><p>Replaces #<?= (int)$submission['resubmission_of'] ?></p><?php endif; ?>
+<?php foreach (submission_files((int)$submission["id"]) as $file): ?><p><a href="evidence.php?id=<?= $file['id'] ?>">Download <?= e($file['original_name']) ?></a></p><?php endforeach; ?>
+<?php if ($submission['status']==='Rejected'): ?><p><a href="submission-form.php?resubmit=<?= $submission['id'] ?>">Resubmit proof</a></p><?php endif; ?>
                                 </td>
 
                                 <td>
-                                    <span class="badge <?= e($submission['class']) ?>">
+                                    <span class="badge <?= e(match ($submission['status']) { 'Verified'=>'badge-compliant', 'Rejected'=>'badge-non-compliant', default=>'badge-warning' }) ?>">
                                         <?= e($submission['status']) ?>
                                     </span>
                                 </td>
                             </tr>
+
                         <?php endforeach; ?>
                         </tbody>
                     </table>

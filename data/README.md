@@ -15,4 +15,4 @@
 
 Each record also includes `postgraduateStayStartDate` and `postgraduateStayRequiredCompletionDate`. Compliance progress uses elapsed calendar days since the start date divided by 365, clamped between 0% and 100%, for every student. It does not calculate physical presence or determine the stored compliance status. The completion date is sample metadata; the progress calculation uses the fixed 365-day requirement.
 
-To refresh the prototype, export postgraduate-only records with the mapped fields and stay dates. Profile alerts derive from visa expiry, last check-in, and stored status. Check-in history is generated demonstration data and is labelled accordingly. SharePoint is not connected.
+To refresh the prototype, export postgraduate-only records with the mapped fields and stay dates. Profile alerts derive from visa expiry, last check-in, and stored status. Check-in history is generated demonstration data and is labelled accordingly. Runtime pages read this JSON sample directly. Demo submissions and check-in overrides are kept separately in .runtime/demo.json. SharePoint is excluded.

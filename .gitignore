@@ -1,0 +1,4 @@
+.env
+/.runtime/
+/data/review-preview-server.log
+/data/review-preview-server-error.log

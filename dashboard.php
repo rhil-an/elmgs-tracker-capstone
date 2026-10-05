@@ -1,6 +1,26 @@
 <?php
-$dataPath = __DIR__ . '/data/students.json';
-$students = json_decode(file_get_contents($dataPath), true, 512, JSON_THROW_ON_ERROR);
+require __DIR__ . '/app/dashboard.php';
+$reviewPreview = PHP_SAPI === 'cli-server' && ($_GET['preview'] ?? '') === 'review';
+$user = $reviewPreview ? ['role'=>'admin'] : require_user('admin');
+$feedback = $_SESSION['dashboard_feedback'] ?? null;
+unset($_SESSION['dashboard_feedback']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+ if ($reviewPreview) { http_response_code(405); exit('Frontend preview does not save decisions.'); }
+ verify_csrf();
+ try {
+  $id=filter_var($_POST['submission_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+  if (!$id) throw new InvalidArgumentException('Invalid submission.');
+  review_submission($user,$id,submission_text($_POST,'decision',20,true),submission_text($_POST,'review_remarks',2000));
+  $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Submission #'.$id.' reviewed successfully.'];
+ } catch (InvalidArgumentException|DomainException $ex) {
+  $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage()];
+ } catch (RuntimeException $ex) {
+  error_log((string)$ex);
+  $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>'Review could not be saved. Reload the queue and try again.'];
+ }
+ header('Location: dashboard.php#pending-heading',true,303); exit;
+}
+$students = $reviewPreview ? json_decode(file_get_contents(__DIR__.'/data/students.json'),true,512,JSON_THROW_ON_ERROR) : all_students();
 
 function e(string $value): string
 {
@@ -19,57 +39,10 @@ function initials(string $name): string
     return $letters;
 }
 
-date_default_timezone_set('Asia/Kuala_Lumpur');
-$today = new DateTimeImmutable('today');
-$attentionAlerts = [];
-
-foreach ($students as $student) {
-    $reasons = [];
-    $severity = 'warning';
-    $daysUntilExpiry = PHP_INT_MAX;
-
-    if (($student['status'] ?? '') === 'Non-Compliant') {
-        $severity = 'danger';
-        $reasons[] = 'Compliance status is non-compliant';
-    } elseif (($student['status'] ?? '') === 'Warning') {
-        $reasons[] = 'Compliance status requires attention';
-    }
-
-    if (!empty($student['visaExpiry'])) {
-        $expiryDate = new DateTimeImmutable($student['visaExpiry']);
-        $daysUntilExpiry = (int) $today->diff($expiryDate)->format('%r%a');
-
-        if ($daysUntilExpiry < 0) {
-            $severity = 'danger';
-            $reasons[] = 'Visa has expired';
-        } elseif ($daysUntilExpiry <= 30) {
-            $reasons[] = 'Visa expires within 30 days';
-        }
-    }
-
-
-
-    $checkinDays = max(0, (int)(new DateTimeImmutable($student['lastCheckIn']))->diff($today)->format('%r%a'));
-    if ($checkinDays > 30) { $reasons[] = 'Check-in is overdue'; }
-
-    if ($reasons) {
-        $attentionAlerts[] = [
-            'student' => $student,
-            'severity' => $severity,
-            'reasons' => $reasons,
-            'visaDays' => $daysUntilExpiry ?? PHP_INT_MAX,
-            'checkinDays' => $checkinDays
-        ];
-    }
-}
-
-usort($attentionAlerts, function ($a, $b) {
-    $priority = ['danger' => 1, 'warning' => 2];
-    return ($priority[$a['severity']] <=> $priority[$b['severity']])
-        ?: ($a['visaDays'] <=> $b['visaDays'])
-        ?: ($b['checkinDays'] <=> $a['checkinDays'])
-        ?: strcmp($a['student']['id'], $b['student']['id']);
-});
+$pending = $reviewPreview ? array_map(function ($student, $index) {
+ return ['id'=>9001+$index,'name'=>$student['name'],'student_id'=>$student['id'],'faculty'=>$student['faculty'],'kind'=>$index ? 'Exit' : 'Entry','location'=>'Local','country'=>'Malaysia','location_details'=>'Kuala Lumpur','submitted_at'=>'2026-10-04 09:15:00','start_date'=>'2026-10-03','end_date'=>'2026-10-03','remarks'=>'Please review my passport stamp and event date.','preview'=>true];
+},array_slice($students,0,2),[0,1]) : pending_reviews();
+$attentionAlerts = dashboard_alerts($students, $pending, new DateTimeImmutable('today'));
 
 $level = $_GET['level'] ?? 'all';
 
@@ -83,7 +56,7 @@ $perPage = $requestedPerPage === false || $requestedPerPage === null
     ? 5
     : $requestedPerPage;
 
-$allowedLevels = ['all', 'medium', 'high'];
+$allowedLevels = ['all', 'medium', 'high', 'pending'];
 $allowedPageSizes = [5, 10, 20, 0];
 
 if (!in_array($level, $allowedLevels, true)) {
@@ -105,7 +78,7 @@ $filteredAlerts = array_values(array_filter(
             return $alert['severity'] === 'danger';
         }
 
-        return $alert['severity'] === 'warning';
+        return $alert['severity'] === ($level === 'pending' ? 'info' : 'warning');
     }
 ));
 
@@ -142,7 +115,8 @@ function dashboardPageUrl(
     return 'dashboard.php?' . http_build_query([
         'page' => $page,
         'per_page' => $perPage,
-        'level' => $level
+        'level' => $level,
+        'preview' => !empty($GLOBALS['reviewPreview']) ? 'review' : null
     ]);
 }
 ?>
@@ -154,7 +128,7 @@ function dashboardPageUrl(
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="ISSD compliance dashboard for HELP University.">
     <title>Dashboard | ICompliance</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/styles.css"><link rel="stylesheet" href="assets/submissions.css"><link rel="stylesheet" href="assets/dashboard.css">
 
     <style>
         .dashboard-content {
@@ -448,7 +422,7 @@ function dashboardPageUrl(
         <nav class="navigation" aria-label="Primary navigation">
           <a class="nav-link active" href="dashboard.php" aria-current="page">Dashboard</a>
           <a class="nav-link" href="student-records.php">Student Records</a>
-        </nav>
+        <a class="nav-link" href="submission-review.php">Submission Reviews</a><?php echo logout_control(); ?></nav>
       </div>
     </header>
 
@@ -474,11 +448,13 @@ function dashboardPageUrl(
             <div class="welcome-mark" aria-hidden="true">A</div>
         </section>
 
-        <section class="alerts-section" aria-labelledby="alerts-heading">
+        <?php require __DIR__.'/app/dashboard-reviews.php'; ?>
+<section class="alerts-section" aria-labelledby="alerts-heading">
             <div class="alerts-heading">
-                <h2 id="alerts-heading">Alerts &amp; Actions</h2>
-                <p><?= $attentionCount ?> students require attention</p>
+                <h2 id="alerts-heading">Alerts</h2>
+                <p><?= $attentionCount ?> matching alerts of <?= count($attentionAlerts) ?> total</p>
                 <form class="alert-filters" method="get">
+                    <?php if ($reviewPreview): ?><input type="hidden" name="preview" value="review"><?php endif; ?>
                     <label class="filter-control">
                         <span>Display</span>
 
@@ -489,19 +465,19 @@ function dashboardPageUrl(
                                 onchange="this.form.submit()"
                             >
                                 <option value="5" <?= $perPage === 5 ? 'selected' : '' ?>>
-                                    5 students
+                                    5 alerts
                                 </option>
 
                                 <option value="10" <?= $perPage === 10 ? 'selected' : '' ?>>
-                                    10 students
+                                    10 alerts
                                 </option>
 
                                 <option value="20" <?= $perPage === 20 ? 'selected' : '' ?>>
-                                    20 students
+                                    20 alerts
                                 </option>
 
                                 <option value="0" <?= $perPage === 0 ? 'selected' : '' ?>>
-                                    All students
+                                    All alerts
                                 </option>
                             </select>
                         </span>
@@ -524,7 +500,7 @@ function dashboardPageUrl(
                                     Medium / Yellow
                                 </option>
 
-                                <option value="high" <?= $level === 'high' ? 'selected' : '' ?>>
+                                <option value="pending" <?= $level === 'pending' ? 'selected' : '' ?>>Pending reviews / Blue</option><option value="high" <?= $level === 'high' ? 'selected' : '' ?>>
                                     High / Red
                                 </option>
                             </select>
@@ -532,12 +508,13 @@ function dashboardPageUrl(
                     </label>
 
                     <input type="hidden" name="page" value="1">
+                    <button class="button secondary" type="submit">Apply filters</button>
                 </form>
             </div>
 
             <?php if (!$visibleAlerts): ?>
                 <div class="no-alerts">
-                    No students currently require attention.
+                    No alerts match this filter.
                 </div>
             <?php else: ?>
                 <div class="alert-list">
@@ -546,7 +523,7 @@ function dashboardPageUrl(
                         $student = $alert['student'];
                         $statusClass = $alert['severity'] === 'danger'
                             ? 'badge-non-compliant'
-                            : 'badge-warning';
+                            : ($alert['severity'] === 'info' ? 'badge-pending' : 'badge-warning');
                         ?>
                         <article class="alert-card <?= e($alert['severity']) ?>">
                             <div class="alert-student">
@@ -561,7 +538,7 @@ function dashboardPageUrl(
                                         </span>
 
                                         <span class="badge <?= $statusClass ?>">
-                                            <?= e($student['status']) ?>
+                                            <?= e(['danger'=>'High','warning'=>'Medium','info'=>'Pending review'][$alert['severity']]) ?>
                                         </span>
                                     </div>
 
@@ -582,9 +559,9 @@ function dashboardPageUrl(
                             <div class="alert-actions">
                                 <a
                                     class="dashboard-button primary"
-                                    href="student-profile.php?id=<?= urlencode($student['id']) ?>"
+                                    href="<?= e($alert['url']) ?>"
                                 >
-                                    View Profile
+                                    <?= $alert['severity'] === 'info' ? 'Review submission' : 'View affected section' ?>
                                 </a>
 
                                 <button
@@ -634,5 +611,6 @@ function dashboardPageUrl(
         </nav>
     </main>
 </div>
+<script src="assets/submission-reviews.js"></script>
 </body>
 </html>

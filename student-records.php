@@ -1,6 +1,8 @@
 <?php
-$dataPath = __DIR__ . '/data/students.json';
-$students = json_decode(file_get_contents($dataPath), true, 512, JSON_THROW_ON_ERROR);
+require __DIR__ . '/app/progress.php';
+require_user('admin');
+$students = all_students();
+$progress = all_stay_progress(); foreach ($students as &$student) $student['stay_progress']=$progress[$student['id']]??verified_stay_progress([],new DateTimeImmutable('today')); unset($student);
 $faculties = array_values(array_unique(array_column($students, 'faculty')));
 sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
 ?>
@@ -25,7 +27,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
         <nav class="navigation" aria-label="Primary navigation">
           <a class="nav-link" href="dashboard.php">Dashboard</a>
           <a class="nav-link active" href="student-records.php" aria-current="page">Student Records</a>
-        </nav>
+        <a class="nav-link" href="submission-review.php">Submission Reviews</a><?php echo logout_control(); ?></nav>
       </div>
     </header>
     <main class="content" id="main-content">
@@ -38,7 +40,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
         <div class="header-accent" aria-hidden="true"></div>
       </header>
 
-      <section class="records-panel" aria-labelledby="filters-heading">
+      <p>Location: <span class="badge location-local">Local</span> <span class="badge location-overseas">Overseas</span>. Location is separate from compliance. Stay target: 365 days for all programmes (demo).</p><section class="records-panel" aria-labelledby="filters-heading">
         <div class="panel-heading">
           <div>
             <h2 id="filters-heading">Find student records</h2>
@@ -74,7 +76,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
           <table>
             <caption class="sr-only">Student compliance records</caption>
             <thead><tr>
-              <th scope="col">Student</th><th scope="col">Faculty / Program</th><th scope="col">Visa Expiry</th><th scope="col">Last Check-in</th><th scope="col">Status</th><th scope="col">Current Location</th><th scope="col">Compliance Progress</th><th scope="col"><span class="sr-only">Profile</span></th>
+              <th scope="col">Student</th><th scope="col">Faculty / Program</th><th scope="col">Visa Expiry</th><th scope="col">Last Check-in</th><th scope="col">Status</th><th scope="col">Current Location</th><th scope="col">Verified Stay Progress</th><th scope="col"><span class="sr-only">Profile</span></th>
             </tr></thead>
             <tbody id="student-records"></tbody>
           </table>
@@ -94,4 +96,3 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
   <script src="assets/app.js"></script>
 </body>
 </html>
-

@@ -1,7 +1,78 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Login | ICompliance</title><link rel="stylesheet" href="assets/styles.css"><style>.login-card{max-width:440px;margin:60px auto;padding:32px;background:white;border-radius:16px}.login-card label{display:block;margin-top:20px}.login-card input{display:block;width:100%;padding:12px;margin-top:8px;box-sizing:border-box}.login-card button{margin-top:24px;width:100%}</style></head>
-<body><header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html"><span class="brand-mark">I</span><span class="brand-name">ICompliance</span></a><span class="office-name">HELP University <span>International Student Office</span></span></div></header><main class="content"><section class="login-card"><h1>Sign in</h1><p>Access your student or administrator account.</p><p id="message" role="status"></p><form action="login.php" method="post"><input type="hidden" name="csrf" id="csrf"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" required maxlength="254"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required><button class="button primary" id="submit" disabled>Sign in</button></form></section></main><script>
-const message=document.getElementById('message');
-if(new URLSearchParams(location.search).get('error')==='invalid')message.textContent='Invalid email or password.';
-fetch('login.php',{credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{document.getElementById('csrf').value=data.csrf;document.getElementById('submit').disabled=false}).catch(()=>{message.textContent='Unable to start sign in. Please reload the page.'});
-</script></body></html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Login | ICompliance</title>
+        <link rel="stylesheet" href="assets/styles.css">
+        <style>
+            .login-card {
+                max-width: 440px;
+                margin: 60px auto;
+                padding: 32px;
+                background: white;
+                border-radius: 16px;
+            }
+
+            .login-card label {
+                display: block;
+                margin-top: 20px;
+            }
+
+            .login-card input {
+                display: block;
+                width: 100%;
+                padding: 12px;
+                margin-top: 8px;
+                box-sizing: border-box;
+            }
+
+            .login-card button {
+                margin-top: 24px;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="topbar">
+            <div class="topbar-inner">
+                <a class="brand" href="index.html">
+                    <span class="brand-mark">I</span>
+                    <span class="brand-name">ICompliance</span>
+                </a>
+                <span class="office-name">HELP University <span>International Student Office</span></span>
+            </div>
+        </header>
+        <main class="content">
+            <section class="login-card">
+                <h1>Sign in</h1>
+                <p>Access your student or administrator account.</p>
+                <p id="message" role="status"></p>
+                <form action="login.php" method="post">
+                    <input type="hidden" name="csrf" id="csrf">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    <button class="button primary" id="submit" disabled>Sign in</button>
+                </form>
+            </section>
+        </main>
+        <script>
+            const message = document.getElementById('message');
+            if (new URLSearchParams(location.search).get('error') === 'invalid') message.textContent = 'Invalid email or password.';
+            fetch('login.php', { credentials: 'same-origin' })
+                .then(r => {
+                    if (!r.ok) throw Error();
+                    return r.json();
+                })
+                .then(data => {
+                    document.getElementById('csrf').value = data.csrf;
+                    document.getElementById('submit').disabled = false;
+                })
+                .catch(() => {
+                    message.textContent = 'Unable to start sign in. Please reload the page.';
+                });
+        </script>
+    </body>
+</html>

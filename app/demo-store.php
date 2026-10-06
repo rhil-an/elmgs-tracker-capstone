@@ -2,6 +2,7 @@
 // Lightweight local demo state for the existing submission screens.
 function demo_store_path(): string { return getenv('ICOMPLIANCE_DEMO_FILE') ?: dirname(__DIR__) . '/.runtime/demo.json'; }
 function empty_demo_state(): array { return ['submissions'=>[], 'evidence'=>[], 'audit'=>[], 'checkins'=>[]]; }
+function next_demo_id(array $rows): int { return $rows ? max(array_map('intval', array_keys($rows))) + 1 : 1; }
 function demo_state(): array {
     $path=demo_store_path();
     if (!is_file($path)) return empty_demo_state();

@@ -94,20 +94,19 @@ if ($student) {
                         <a class="button primary" href="student-records.php#records">Back to Student Records</a>
                     </section>
                 <?php else: ?>
-                    <header class="profile-hero" aria-labelledby="student-name">
-                        <div class="profile-avatar" aria-label="Illustrated initials for <?= e($student['name']) ?>"><?= e(initials($student['name'])) ?></div>
-                        <div>
-                            <p class="eyebrow">Student compliance profile</p>
-                            <h1 id="student-name"><?= e($student['name']) ?></h1>
-                            <p class="profile-id"><?= e($student['id']) ?> · <?= e($student['nationality']) ?></p>
-                            <p class="profile-meta">
-                                <span><strong>Faculty / Program:</strong> <?= e($student['faculty']) ?></span>
-                                <span><strong>Current location:</strong> <?= e($student['currentLocation']) ?></span>
-                            </p>
-                        </div>
-                        <span class="badge profile-badge badge-<?= strtolower(str_replace(' ', '-', $student['status'])) ?>"><?= e($student['status']) ?></span>
-                        <?= stay_progress_html(student_stay_progress($student['id'])) ?>
-                    </header>
+                    <header class="page-header profile-page-heading"><div><p class="eyebrow">International Student Office</p><h1 id="student-name">Student Profile</h1><p>Student information, verified stay progress and submission history.</p></div></header>
+                    <section class="profile-card student-information" aria-labelledby="student-information-heading">
+                        <h2 id="student-information-heading">Student &amp; Academic Information</h2>
+                        <dl class="detail-list profile-information-rows">
+                            <div><dt>Full name</dt><dd><?= e($student['name']) ?></dd></div>
+                            <div><dt>Student ID</dt><dd><?= e($student['id']) ?></dd></div>
+                            <div><dt>Nationality</dt><dd><?= e($student['nationality']) ?></dd></div>
+                            <div><dt>University</dt><dd>HELP University</dd></div>
+                            <div><dt>Faculty / Programme</dt><dd><?= e($student['faculty']) ?></dd></div>
+                            <div><dt>Compliance status</dt><dd><span class="badge badge-<?= strtolower(str_replace(' ', '-', $student['status'])) ?>"><?= e($student['status']) ?></span></dd></div>
+                        </dl>
+                    </section>
+                    <?= stay_progress_html(student_stay_progress($student['id'])) ?>
                     <section class="issues-section" aria-labelledby="issues-heading">
                         <div class="section-intro">
                             <div>
@@ -138,21 +137,12 @@ if ($student) {
                         </div>
                     </section>
                     <div class="profile-grid">
-                        <section class="profile-card" aria-labelledby="academic-heading">
-                            <h2 id="academic-heading">Academic Details</h2>
-                            <dl class="detail-list">
-                                <div><dt>University</dt><dd>HELP University</dd></div>
-                                <div><dt>Faculty / Program</dt><dd><?= e($student['faculty']) ?></dd></div>
-                                <div><dt>Student Status</dt><dd><?= e($student['status']) ?></dd></div>
-                                <div><dt>Student ID</dt><dd><?= e($student['id']) ?></dd></div>
-                            </dl>
-                        </section>
-                        <section class="profile-card" aria-labelledby="visa-heading">
+<section class="profile-card" aria-labelledby="visa-heading">
                             <h2 id="visa-heading">Visa &amp; Residence</h2>
                             <dl class="detail-list">
                                 <div><dt>Visa Expiry</dt><dd><?= e(date_label($student['visaExpiry'])) ?></dd></div>
                                 <div><dt>Visa Status</dt><dd class="<?= e($visaClass) ?>"><?= e($visaState) ?></dd></div>
-                                <div><dt>Current Location</dt><dd><?= e($student['currentLocation']) ?></dd></div>
+                                <div><dt>Current Location</dt><dd><span class="badge location-<?= strtolower($student['currentLocation']) ?>"><?= e($student['currentLocation']) ?></span></dd></div>
                             </dl>
                         </section>
                         <section class="profile-card" aria-labelledby="checkin-heading">
@@ -160,22 +150,9 @@ if ($student) {
                             <dl class="detail-list">
                                 <div><dt>Last Check-in</dt><dd><?= e(date_label($student['lastCheckIn'])) ?></dd></div>
                                 <div><dt>Days since check-in</dt><dd><?= $checkinDays ?> days</dd></div>
-                                <div><dt>Current Location</dt><dd><?= e($student['currentLocation']) ?></dd></div>
-                                <div><dt>Compliance Status</dt><dd><?= e($student['status']) ?></dd></div>
-                            </dl>
+                            <div><dt>Check-in status</dt><dd><?= $checkinDays > 30 ? 'Overdue' : 'Within 30 days' ?></dd></div></dl>
                         </section>
-                        <section class="profile-card" aria-labelledby="guide-heading">
-                            <h2 id="guide-heading">Status Guide</h2>
-                            <p>Location: <span class="badge location-local">Local (Malaysia)</span> <span class="badge location-overseas">Overseas</span>. Overseas alone is not a compliance warning.</p>
-                            <p>Submission: <span class="badge submission-pending">Pending</span> <span class="badge submission-verified">Verified</span> <span class="badge submission-rejected">Rejected</span>. Only verified travel may qualify for stay progress.</p>
-                            <p>Compliance alerts are separate from location and submission decisions.</p>
-                            <dl class="detail-list">
-                                <div><dt><span class="badge badge-non-compliant">Critical</span></dt><dd>Expired or Non-Compliant</dd></div>
-                                <div><dt><span class="badge badge-warning">Warning</span></dt><dd>Upcoming visa or overdue check-in</dd></div>
-                                <div><dt><span class="badge badge-compliant">Clear</span></dt><dd>No immediate issues</dd></div>
-                            </dl>
-                        </section>
-                        <?php require __DIR__.'/app/profile-history.php'; ?>
+<?php require __DIR__.'/app/profile-history.php'; ?>
                     </div>
                 <?php endif; ?>
             </main>

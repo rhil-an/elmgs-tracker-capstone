@@ -58,6 +58,20 @@ $statusClass = match ($student['status']) {
 };
 
 $submissionHistory = submission_history($studentId);
+usort($submissionHistory, static function (array $a, array $b): int {
+    $timestamp = static fn(array $row): int => !empty($row['submitted_at']) ? (new DateTimeImmutable($row['submitted_at']))->getTimestamp() : PHP_INT_MIN;
+    return ($timestamp($b) <=> $timestamp($a)) ?: ((int)$b['id'] <=> (int)$a['id']);
+});
+
+function history_event_date(array $submission): string
+{
+    $start = (string)($submission['start_date'] ?? '');
+    $end = (string)($submission['end_date'] ?? '');
+    $date = DateTimeImmutable::createFromFormat('!Y-m-d', $start);
+    if (!$date || $date->format('Y-m-d') !== $start) return 'Date unavailable';
+    if ($end !== '' && $end !== $start) return $date->format('d M Y') . ' (legacy range; needs clarification)';
+    return $date->format('d M Y');
+}
 ?>
 
 <!doctype html>
@@ -74,47 +88,11 @@ $submissionHistory = submission_history($studentId);
     <title>My Dashboard | ICompliance</title>
 
     <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/student-dashboard.css">
 
     <style>
         .student-dashboard {
             max-width: 1440px;
-        }
-
-        .student-welcome {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            margin-bottom: 28px;
-            padding: 28px 32px;
-            border: 1px solid var(--line);
-            border-left: 5px solid var(--red);
-            border-radius: 14px;
-            background: #fff;
-            box-shadow: 0 10px 28px rgba(34, 43, 55, .06);
-        }
-
-        .student-welcome h2 {
-            margin: 0 0 6px;
-            color: var(--ink);
-            font-size: clamp(1.5rem, 3vw, 2.1rem);
-            letter-spacing: -.03em;
-        }
-
-        .student-welcome p {
-            margin: 0;
-            color: var(--muted);
-        }
-
-        .student-welcome-mark {
-            display: grid;
-            width: 58px;
-            height: 58px;
-            place-items: center;
-            border-radius: 50%;
-            background: var(--red);
-            color: #fff;
-            font-weight: 800;
         }
 
         .student-summary {
@@ -234,12 +212,6 @@ $submissionHistory = submission_history($studentId);
             font-size: .88rem;
         }
 
-        .student-submit-action {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 16px;
-        }
-
         @media (max-width: 850px) {
             .student-summary {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -247,18 +219,11 @@ $submissionHistory = submission_history($studentId);
         }
 
         @media (max-width: 620px) {
-            .student-welcome {
-                padding: 22px;
-            }
-
             .student-summary {
                 grid-template-columns: 1fr;
             }
 
-            .student-welcome-mark {
-                display: none;
-            }
-        }
+}
     </style>
 </head>
 
@@ -301,6 +266,10 @@ $submissionHistory = submission_history($studentId);
     </header>
 
     <main class="content student-dashboard" id="main-content">
+        <div class="student-account" aria-label="Logged-in student">
+            <span class="student-account-avatar" aria-hidden="true"><?= e(initials($student['name'])) ?></span>
+            <span class="student-account-name"><?= e($student['name']) ?></span>
+        </div>
 
         <header class="page-header">
             <div>
@@ -311,45 +280,15 @@ $submissionHistory = submission_history($studentId);
                 </p>
             </div>
 
-            <div class="header-accent" aria-hidden="true"></div>
+            <a class="button primary student-main-action" href="submission-form.php">Submit New Proof</a>
         </header>
 
-        <section
-            class="student-welcome"
-            aria-labelledby="welcome-heading"
-        >
-            <div>
-                <h2 id="welcome-heading">
-                    Welcome back, <?= e($student['name']) ?>!
-                </h2>
-
-                <p>
-                    Keep your student information and compliance submissions up to date.
-                </p>
-            </div>
-
-            <div class="student-welcome-mark" aria-hidden="true">
-                <?= e(initials($student['name'])) ?>
-            </div>
-        </section>
-
-        <section
+<section
             class="profile-hero"
             aria-labelledby="student-profile-heading"
         >
-            <div
-                class="profile-avatar"
-                aria-label="Student initials"
-            >
-                <?= e(initials($student['name'])) ?>
-            </div>
-
-            <div>
-                <p class="eyebrow">My Student Profile</p>
-
-                <h1 id="student-profile-heading">
-                    <?= e($student['name']) ?>
-                </h1>
+<div>
+<h2 id="student-profile-heading">My Student Profile</h2>
 
                 <p class="profile-id">
                     <?= e($student['id']) ?>
@@ -363,18 +302,11 @@ $submissionHistory = submission_history($studentId);
                         <?= e($student['faculty']) ?>
                     </span>
 
-                    <span>
-                        <strong>Current location:</strong>
-                        <?= e($student['currentLocation']) ?>
-                    </span>
-                </p>
+</p>
             </div>
 
-            <span class="badge profile-badge <?= $statusClass ?>">
-                <?= e($student['status']) ?>
-            </span>
+        </section>
         <?= stay_progress_html(student_stay_progress($studentId)) ?>
-</section>
 
         <section
             class="profile-grid student-summary"
@@ -449,7 +381,7 @@ $submissionHistory = submission_history($studentId);
             </div>
 
             <div class="submission-card">
-                <div class="submission-scroll">
+                <div class="submission-scroll" tabindex="0" role="region" aria-label="Submission history table">
                     <table class="submission-table">
                         <caption class="sr-only">
                             Student submission history
@@ -457,37 +389,35 @@ $submissionHistory = submission_history($studentId);
 
                         <thead>
                         <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Submission Type</th>
-                            <th scope="col">Description</th>
+                            <th scope="col">Date submitted</th>
+                            <th scope="col">Entry / Exit / Check-in</th>
+                            <th scope="col">Travel / Check-in date</th>
+                            <th scope="col">Country</th>
                             <th scope="col">Status</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        <?php if (!$submissionHistory): ?><tr><td colspan="4">No submissions yet.</td></tr><?php endif; ?>
+                        <?php if (!$submissionHistory): ?><tr><td colspan="5">No submissions yet.</td></tr><?php endif; ?>
 <?php foreach ($submissionHistory as $submission): ?>
                             <tr>
                                 <td class="submission-date">
-                                    <?= e((new DateTimeImmutable($submission['submitted_at']))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y H:i')) ?>
+                                    <?= e(!empty($submission['submitted_at']) ? (new DateTimeImmutable($submission['submitted_at']))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y') : 'Date unavailable') ?>
                                 </td>
 
                                 <td>
-                                    <?= e(match ($submission['kind']) { 'CheckIn'=>'Location check-in', 'Entry'=>'Entry declaration', default=>'Exit declaration' } . ' · '.$submission['start_date'].' → '.$submission['end_date']) ?>
+                                    <?= e(match ($submission['kind']) { 'CheckIn'=>'Check-in', 'Entry'=>'Entry', 'Exit'=>'Exit', default=>(string)$submission['kind'] }) ?>
                                 </td>
 
                                 <td>
-                                    <?= e($submission['country'].' · '.$submission['location_details'].' · '.$submission['remarks'].' · '.($submission['review_remarks'] ?? 'Awaiting review')) ?>
-<?php if ($submission['reviewed_at']): ?><p>Reviewed <?= e((new DateTimeImmutable($submission['reviewed_at']))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y H:i')) ?></p><?php endif; ?>
-<?php if ($submission['resubmission_of']): ?><p>Replaces #<?= (int)$submission['resubmission_of'] ?></p><?php endif; ?>
-<?php foreach (submission_files((int)$submission["id"]) as $file): ?><p><a href="evidence.php?id=<?= $file['id'] ?>">Download <?= e($file['original_name']) ?></a></p><?php endforeach; ?>
-<?php if ($submission['status']==='Rejected'): ?><p><a href="submission-form.php?resubmit=<?= $submission['id'] ?>">Resubmit proof</a></p><?php endif; ?>
+                                    <?= e(history_event_date($submission)) ?>
                                 </td>
-
+                                <td><?= e((string)($submission['country'] ?? '')) ?></td>
                                 <td>
                                     <span class="badge <?= e(match ($submission['status']) { 'Verified'=>'badge-compliant', 'Rejected'=>'badge-non-compliant', default=>'badge-warning' }) ?>">
-                                        <?= e($submission['status']) ?>
+                                        <?= e($submission['status'] === 'Rejected' ? 'Needs resubmission' : $submission['status']) ?>
                                     </span>
+                                    <?php if ($submission['status'] === 'Rejected'): ?><a class="history-resubmit" href="submission-form.php?resubmit=<?= (int)$submission['id'] ?>">Resubmit</a><?php endif; ?>
                                 </td>
                             </tr>
 
@@ -496,15 +426,7 @@ $submissionHistory = submission_history($studentId);
                     </table>
                 </div>
             </div>
-            <div class="student-submit-action">
-                <a
-                    class="button primary"
-                    href="submission-form.php"
-                >
-                    Submit New Proof
-                </a>
-            </div>
-        </section>
+</section>
 
         <section
             class="student-help"

@@ -47,29 +47,37 @@ function validate_evidence(array $files,bool $required,bool $imageOnly=false): a
  return $result;
 }
 function save_submission(array $user,array $data,array $evidence,?int $parent=null): int {
+ return update_demo_state(function (&$state) use ($user,$data,$evidence,$parent) {
+  return append_demo_submission($state,$user,$data,$evidence,$parent);
+ });
+}
+// Shared by normal requests and the explicit, atomic synthetic demo seed.
+function append_demo_submission(array &$state,array $user,array $data,array $evidence,?int $parent=null): int {
  if ($user['role']!=='student' || !$user['student_id']) throw new InvalidArgumentException('Student account required.');
  if ($data['kind']!=='CheckIn' && ($data['start_date']!==$data['end_date'] || !$evidence || array_filter($evidence,static fn($file)=>!in_array($file['mime'],['image/jpeg','image/png'],true)))) throw new InvalidArgumentException('Travel requires one event date and passport image evidence.');
- return update_demo_state(function (&$state) use ($user,$data,$evidence,$parent) {
   if ($parent!==null) {
    $old=$state['submissions'][$parent]??null;
    if (!$old || $old['student_id']!==$user['student_id'] || $old['status']!=='Rejected') throw new InvalidArgumentException('Only your rejected records can be resubmitted.');
    foreach ($state['submissions'] as $row) if ($row['resubmission_of']===$parent) throw new InvalidArgumentException('This record already has a replacement.');
   }
-  $id=count($state['submissions'])+1; $now=date(DATE_ATOM);
+  $id=next_demo_id($state['submissions']); $now=date(DATE_ATOM);
   $state['submissions'][$id]=array_merge($data,['id'=>$id,'student_id'=>$user['student_id'],'status'=>'Pending','submitted_at'=>$now,'resubmission_of'=>$parent,'reviewed_at'=>null,'reviewer_id'=>null,'reviewer'=>null,'review_remarks'=>null,'notification_status'=>null]);
   foreach ($evidence as $file) {
-   $fileId=count($state['evidence'])+1;
+   $fileId=next_demo_id($state['evidence']);
    $state['evidence'][$fileId]=['id'=>$fileId,'submission_id'=>$id,'student_id'=>$user['student_id'],'original_name'=>$file['name'],'mime_type'=>$file['mime'],'byte_size'=>$file['size'],'content_base64'=>$file['content']];
   }
   $state['audit'][]=['submission_id'=>$id,'actor_id'=>$user['id'],'action'=>'Submitted','remarks'=>$data['remarks'],'created_at'=>$now,'email'=>$user['email']??'student@gmail.com'];
   return $id;
- });
 }
 function review_submission(array $user,int $id,string $decision,string $remarks): void {
+ update_demo_state(function (&$state) use ($user,$id,$decision,$remarks) {
+  decide_demo_submission($state,$user,$id,$decision,$remarks);
+ });
+}
+function decide_demo_submission(array &$state,array $user,int $id,string $decision,string $remarks): void {
  if ($user['role']!=='admin') throw new InvalidArgumentException('Admin account required.');
  $remarks=trim($remarks);
  if (!in_array($decision,['Verified','Rejected'],true) || strlen($remarks)>2000 || ($decision==='Rejected' && $remarks==='')) throw new InvalidArgumentException('Reject requires a reason; remarks are limited to 2000 bytes.');
- update_demo_state(function (&$state) use ($user,$id,$decision,$remarks) {
   $row=$state['submissions'][$id]??null;
   if (!$row || $row['status']!=='Pending') throw new DomainException('This submission has already been decided or does not exist.');
   $now=date(DATE_ATOM);
@@ -81,7 +89,6 @@ function review_submission(array $user,int $id,string $decision,string $remarks)
    if ($row['start_date']>=$last) $state['checkins'][$row['student_id']]=['lastCheckIn'=>$row['start_date'],'currentLocation'=>$row['location']];
   }
   $state['audit'][]=['submission_id'=>$id,'actor_id'=>$user['id'],'action'=>$decision,'remarks'=>$remarks,'created_at'=>$now,'email'=>$user['email']??'admin@gmail.com'];
- });
 }
 function submission_history(string $studentId): array { return array_values(array_filter(demo_submissions(),fn($row)=>$row['student_id']===$studentId)); }
 function profile_submission_history(string $studentId): array {

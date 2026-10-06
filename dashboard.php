@@ -44,81 +44,7 @@ $pending = $reviewPreview ? array_map(function ($student, $index) {
 },array_slice($students,0,2),[0,1]) : pending_reviews();
 $attentionAlerts = dashboard_alerts($students, $pending, new DateTimeImmutable('today'));
 
-$level = $_GET['level'] ?? 'all';
-
-$requestedPerPage = filter_input(
-    INPUT_GET,
-    'per_page',
-    FILTER_VALIDATE_INT
-);
-
-$perPage = $requestedPerPage === false || $requestedPerPage === null
-    ? 5
-    : $requestedPerPage;
-
-$allowedLevels = ['all', 'medium', 'high', 'pending'];
-$allowedPageSizes = [5, 10, 20, 0];
-
-if (!in_array($level, $allowedLevels, true)) {
-    $level = 'all';
-}
-
-if (!in_array($perPage, $allowedPageSizes, true)) {
-    $perPage = 5;
-}
-
-$filteredAlerts = array_values(array_filter(
-    $attentionAlerts,
-    function ($alert) use ($level) {
-        if ($level === 'all') {
-            return true;
-        }
-
-        if ($level === 'high') {
-            return $alert['severity'] === 'danger';
-        }
-
-        return $alert['severity'] === ($level === 'pending' ? 'info' : 'warning');
-    }
-));
-
-$attentionCount = count($filteredAlerts);
-
-$totalPages = $perPage === 0
-    ? 1
-    : max(1, (int) ceil($attentionCount / $perPage));
-
-$requestedPage = filter_input(
-    INPUT_GET,
-    'page',
-    FILTER_VALIDATE_INT
-);
-
-$page = max(1, min(
-    $totalPages,
-    $requestedPage ?: 1
-));
-
-$visibleAlerts = $perPage === 0
-    ? $filteredAlerts
-    : array_slice(
-        $filteredAlerts,
-        ($page - 1) * $perPage,
-        $perPage
-    );
-
-function dashboardPageUrl(
-    int $page,
-    int $perPage,
-    string $level
-): string {
-    return 'dashboard.php?' . http_build_query([
-        'page' => $page,
-        'per_page' => $perPage,
-        'level' => $level,
-        'preview' => !empty($GLOBALS['reviewPreview']) ? 'review' : null
-    ]);
-}
+extract(dashboard_alert_page($attentionAlerts, $_GET), EXTR_SKIP);
 ?>
 
 <!doctype html>
@@ -452,9 +378,19 @@ function dashboardPageUrl(
 <section class="alerts-section" aria-labelledby="alerts-heading">
             <div class="alerts-heading">
                 <h2 id="alerts-heading">Alerts</h2>
-                <p><?= $attentionCount ?> matching alerts of <?= count($attentionAlerts) ?> total</p>
-                <form class="alert-filters" method="get">
-                    <?php if ($reviewPreview): ?><input type="hidden" name="preview" value="review"><?php endif; ?>
+                <p><?= $attentionCount ?> matching students of <?= count($attentionAlerts) ?> students requiring attention</p>
+                <form class="alert-filters" method="get" action="dashboard.php#alerts-heading">
+                    <?php
+// Retain nested query values safely through normal URL encoding and escaped HTML.
+foreach ($_GET as $key=>$value) {
+ if (in_array($key,['page','per_page','level'],true)) continue;
+ $encoded=http_build_query([$key=>$value]);
+ foreach (explode('&',$encoded) as $pair) {
+  [$name,$item]=array_pad(explode('=',$pair,2),2,'');
+  echo '<input type="hidden" name="'.e(urldecode($name)).'" value="'.e(urldecode($item)).'">';
+ }
+}
+?>
                     <label class="filter-control">
                         <span>Display</span>
 
@@ -462,22 +398,22 @@ function dashboardPageUrl(
                             <select
                                 class="styled-select"
                                 name="per_page"
-                                onchange="this.form.submit()"
+                                aria-describedby="filter-help"
                             >
                                 <option value="5" <?= $perPage === 5 ? 'selected' : '' ?>>
-                                    5 alerts
+                                    5 students
                                 </option>
 
                                 <option value="10" <?= $perPage === 10 ? 'selected' : '' ?>>
-                                    10 alerts
+                                    10 students
                                 </option>
 
                                 <option value="20" <?= $perPage === 20 ? 'selected' : '' ?>>
-                                    20 alerts
+                                    20 students
                                 </option>
 
                                 <option value="0" <?= $perPage === 0 ? 'selected' : '' ?>>
-                                    All alerts
+                                    All students
                                 </option>
                             </select>
                         </span>
@@ -490,7 +426,7 @@ function dashboardPageUrl(
                             <select
                                 class="styled-select"
                                 name="level"
-                                onchange="this.form.submit()"
+                                aria-describedby="filter-help"
                             >
                                 <option value="all" <?= $level === 'all' ? 'selected' : '' ?>>
                                     All alerts
@@ -508,7 +444,7 @@ function dashboardPageUrl(
                     </label>
 
                     <input type="hidden" name="page" value="1">
-                    <button class="button secondary" type="submit">Apply filters</button>
+                    <p id="filter-help">Filters apply immediately. High/Medium use the highest severity per student; Pending includes every student awaiting review.</p>
                 </form>
             </div>
 
@@ -549,21 +485,14 @@ function dashboardPageUrl(
                                     </div>
 
                                     <ul class="alert-reasons">
-                                        <?php foreach ($alert['reasons'] as $reason): ?>
-                                            <li><?= e($reason) ?></li>
+                                        <?php foreach ($alert['issues'] as $issue): ?>
+                                            <li><?= e($issue['reason']) ?> <a href="<?= e($issue['url']) ?>" aria-label="<?= e(($issue['severity']==='info' ? 'Review: ' : 'View: ').$issue['reason'].' for '.$student['name']) ?>"><?= $issue['severity']==='info' ? 'Review submission' : 'View' ?></a></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="alert-actions">
-                                <a
-                                    class="dashboard-button primary"
-                                    href="<?= e($alert['url']) ?>"
-                                >
-                                    <?= $alert['severity'] === 'info' ? 'Review submission' : 'View affected section' ?>
-                                </a>
-
                                 <button
                                     class="dashboard-button secondary"
                                     type="button"
@@ -582,7 +511,7 @@ function dashboardPageUrl(
             <?php if ($page > 1): ?>
                 <a
                     class="button secondary"
-                    href="<?= e(dashboardPageUrl($page - 1, $perPage, $level)) ?>#alerts-heading"
+                    href="<?= e(dashboardPageUrl($page - 1, $perPage, $level)) ?>"
                 >
                     Previous
                 </a>
@@ -599,7 +528,7 @@ function dashboardPageUrl(
             <?php if ($page < $totalPages): ?>
                 <a
                     class="button primary"
-                    href="<?= e(dashboardPageUrl($page + 1, $perPage, $level)) ?>#alerts-heading"
+                    href="<?= e(dashboardPageUrl($page + 1, $perPage, $level)) ?>"
                 >
                     Next
                 </a>
@@ -611,6 +540,6 @@ function dashboardPageUrl(
         </nav>
     </main>
 </div>
-<script src="assets/submission-reviews.js"></script>
+<script src="assets/submission-reviews.js"></script><script src="assets/dashboard-filters.js"></script>
 </body>
 </html>

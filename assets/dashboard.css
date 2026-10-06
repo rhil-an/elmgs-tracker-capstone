@@ -1,4 +1,8 @@
 .pending-section { margin-bottom:28px; }
+#alerts-heading { scroll-margin-top:20px; }
+.alert-reasons a { display:inline-block; margin-left:8px; color:#174b83; font-weight:700; }
+.alert-card.info .alert-reasons { color:#174b83; }
+#filter-help { flex-basis:100%; font-size:.85rem; }
 .review-table-scroll { max-width:100%; overflow-x:auto; margin-top:20px; }
 .review-table { width:100%; min-width:720px; border-collapse:collapse; text-align:left; }
 .review-table th { background:#f4f7fa; color:var(--muted); font-size:.82rem; }
@@ -25,3 +29,4 @@
 .alert-info,.alert-student { min-width:0; overflow-wrap:anywhere; }
 .dashboard-button:focus-visible,summary:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 @media(max-width:700px) { .evidence-preview { height:260px; } .review-card { padding:16px; } }
+.review-attachments{display:flex;flex-wrap:wrap;gap:14px}.review-attachment{display:grid;gap:7px;max-width:240px}.evidence-filename{font-size:.8rem;overflow-wrap:anywhere}.evidence-actions{display:flex;gap:16px;font-size:.85rem}.review-document{display:grid;place-items:center;width:220px;min-height:125px;border:1px solid var(--line);border-radius:8px;background:#edf3fa;color:#174b83;font-weight:800}.evidence-unavailable{display:block;color:var(--muted);font-size:.85rem}

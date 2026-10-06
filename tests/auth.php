@@ -58,6 +58,27 @@ try {
     check(request('/login.php',['email'=>'admin@gmail.com','password'=>'wrong'])['status'] === 403, 'login rejects missing CSRF');
     check(request('/logout.php')['status'] === 405, 'logout rejects GET');
     $studentCookie = fixture('student'); $adminCookie = fixture('admin');
+    $historyPage = request('/dashboard-student.php', null, $studentCookie)['body'];
+    check(str_contains($historyPage, 'colspan="5">No submissions yet.'), 'student history empty state spans five columns');
+    $historyState = empty_demo_state();
+    $base = ['student_id'=>'B2500004','kind'=>'Entry','start_date'=>'2025-08-08','end_date'=>'2025-08-08','country'=>'Malaysia','submitted_at'=>'2026-10-05T18:00:00+00:00','status'=>'Pending'];
+    $historyState['submissions'] = [
+        900=>$base+['id'=>900],
+        100=>array_replace($base,['id'=>100,'submitted_at'=>'2026-10-05T18:00:00+00:00','status'=>'Rejected','country'=>'<unsafe>']),
+        10=>array_replace($base,['id'=>10,'submitted_at'=>'2026-10-06T10:00:00+08:00','kind'=>'CheckIn','start_date'=>'','end_date'=>'']),
+        20=>array_replace($base,['id'=>20,'submitted_at'=>'2026-10-01T10:00:00+08:00','status'=>'Verified','kind'=>'Exit','end_date'=>'2025-08-09'])
+    ];
+    file_put_contents($sessions.'/demo.json', json_encode($historyState));
+    $historyPage = request('/dashboard-student.php', null, $studentCookie)['body'];
+    preg_match('~<table class="submission-table">(.*?)</table>~s', $historyPage, $historyMatch);
+    $historyTable = $historyMatch[1] ?? '';
+    check(substr_count($historyTable,'<th scope="col">')===5, 'student history has five headers');
+    check(str_contains($historyTable,'06 Oct 2026') && str_contains($historyTable,'08 Aug 2025') && !preg_match('/\d{2}:\d{2}/',$historyTable), 'submitted and event dates distinct, Kuala Lumpur, without times');
+    check(str_contains($historyTable,'Needs resubmission') && substr_count($historyTable,'resubmit=')===1 && str_contains($historyTable,'resubmit=100'), 'rejection label and conditional resubmit URL');
+    check(str_contains($historyTable,'Date unavailable') && str_contains($historyTable,'legacy range; needs clarification'), 'missing and ambiguous event dates honestly labelled');
+    check(str_contains($historyTable,'&lt;unsafe&gt;') && !str_contains($historyTable,'<unsafe>'), 'history country escaped');
+    check(strpos($historyTable,'Date unavailable') < strpos($historyTable,'resubmit=100') && strpos($historyTable,'resubmit=100') < strpos($historyTable,'legacy range'), 'history sorted by timestamp then descending ID');
+    file_put_contents($sessions.'/demo.json',json_encode(empty_demo_state()));
     foreach (['dashboard.php','student-records.php','student-profile.php?id=B2500001','submission-review.php'] as $page) check(request('/'.$page,null,$studentCookie)['status'] === 403,'student denied admin page: '.$page);
     foreach (['dashboard-student.php','submission-form.php','submission-overseas.php'] as $page) {
         check(request('/'.$page,null,$adminCookie)['status'] === 403,'admin denied student page: '.$page);

@@ -6,7 +6,10 @@ function check(bool $ok,string $label): void { global $passed; if (!$ok) throw n
 function rejects(callable $fn,string $label): void { try { $fn(); } catch (InvalidArgumentException|DomainException $e) { check(true,$label); return; } check(false,$label); }
 $input=['kind'=>'CheckIn','location'=>'Local','country'=>'Malaysia','location_details'=>'Kuala Lumpur','start_date'=>date('Y-m-d'),'end_date'=>date('Y-m-d'),'remarks'=>'Test'];
 check(validate_submission($input)['kind']==='CheckIn','today check-in valid');
-foreach ([['start_date'=>'2026-02-30'],['start_date'=>'2099-01-01'],['kind'=>'Unknown'],['country'=>''],['country'=>[]],['remarks'=>str_repeat('a',2001)],['location'=>'Overseas'],['start_date'=>'2020-01-01','end_date'=>'2020-01-01'],['start_date'=>date('Y-m-d'),'end_date'=>'2020-01-01']] as $change) rejects(fn()=>validate_submission(array_replace($input,$change)),'reject invalid dates / fields '.json_encode(array_keys($change)));
+check(validate_submission(array_replace($input,['country'=>[]]))['country']==='Malaysia','local country forced');
+check(!array_key_exists('location_details',validate_submission($input)),'removed location field absent');
+foreach (['', []] as $country) rejects(fn()=>validate_submission(array_replace($input,['location'=>'Overseas','country'=>$country])),'overseas country required and textual');
+foreach ([['start_date'=>'2026-02-30'],['start_date'=>'2099-01-01'],['kind'=>'Unknown'],['remarks'=>str_repeat('a',2001)],['location'=>'Overseas'],['start_date'=>'2020-01-01','end_date'=>'2020-01-01'],['start_date'=>date('Y-m-d'),'end_date'=>'2020-01-01']] as $change) rejects(fn()=>validate_submission(array_replace($input,$change)),'reject invalid dates / fields '.json_encode(array_keys($change)));
 check(validate_submission(array_replace($input,['kind'=>'Exit','location'=>'Overseas','country'=>'Singapore','start_date'=>'2020-01-01','end_date'=>'2020-01-01']))['start_date']==='2020-01-01','historical travel accepted');
 check(validate_evidence([],false)===[],'local check-in may omit evidence');
 rejects(fn()=>validate_evidence([],true),'required evidence missing');

@@ -1,6 +1,7 @@
 <?php
 if (PHP_SAPI!=='cli') { http_response_code(404); exit; }
-require dirname(__DIR__).'/app/submissions.php';
+require dirname(__DIR__).'/app/dashboard.php';
+require dirname(__DIR__).'/app/progress.php';
 $dir=sys_get_temp_dir().'/icompliance-table-'.bin2hex(random_bytes(8)); mkdir($dir);
 $oldEnv=getenv('ICOMPLIANCE_DEMO_FILE'); putenv('ICOMPLIANCE_DEMO_FILE='.$dir.'/demo.json');
 $port=random_int(22001,23000); $server=null; $passed=0;
@@ -44,6 +45,44 @@ try {
  foreach ($statuses as $status) $empty=$empty && trim($status->textContent)==='' && $status->getAttribute('class')==='sr-only' && $status->getAttribute('role')==='status';
  check($statuses->length===6 && $empty,'initial status empty/invisible; accessible live region retained without blue badge');
  check($xpath->query('//tr[@data-review-row]//button[@data-decision]')->length===12,'both review controls retained for every row');
+
+ check($xpath->query('//tr[@data-review-row]//form[@method="post"]')->length===12,'dashboard controls are real POST forms');
+ check($xpath->query('//tr[@data-review-row]//textarea[@name="review_remarks" and @required]')->length===6,'inline rejection reasons required');
+ $before=demo_state(); $warnings=dashboard_alerts(all_students(),[],new DateTimeImmutable('today'));
+ $post=['csrf'=>str_repeat('a',64),'submission_id'=>1,'decision'=>'Verified'];
+ check(request('/dashboard.php',$cookies['student'],$post)['status']===403,'student review POST denied');
+ check(request('/dashboard.php',$cookies['admin'],array_replace($post,['csrf'=>'bad']))['status']===403,'dashboard invalid CSRF denied');
+ check(request('/dashboard.php?preview=review','',$post)['status']===405,'preview writes denied');
+ check(demo_state()===$before,'denied requests never mutate state');
+ check(request('/dashboard.php?level=pending&per_page=10&page=1',$cookies['admin'],$post)['status']===303,'dashboard approval redirects after save');
+ $saved=demo_state();
+ check($saved['submissions'][1]['status']==='Verified' && $saved['submissions'][1]['reviewer']==='admin@gmail.com' && count(submission_audit(1))===2,'approval status reviewer and audit persisted');
+ $reload=request('/dashboard.php?level=pending&per_page=10',$cookies['admin']);
+ check(!str_contains($reload['body'],'id="review-1"') && str_contains($reload['body'],'reviewed successfully'),'reload removes approved row and confirms save');
+ check(str_contains($reload['body'],'level=pending&amp;per_page=10'),'filter state retained in form actions');
+ check(student_stay_progress('B2500004')['verified_days']>0,'approved entry adds official ongoing stay days');
+ $profile=request('/student-profile.php?id=B2500004',$cookies['admin']);
+ check(str_contains($profile['body'],'Verified') && !str_contains($profile['body'],'Undefined array key'),'profile renders new record without location details');
+ check(str_contains(request('/dashboard-student.php',$cookies['student'])['body'],'Verified'),'student saved history reflects approval');
+ check(request('/dashboard.php',$cookies['admin'],$post)['status']===303,'duplicate returns feedback redirect');
+ check(demo_state()===$saved && str_contains(request('/dashboard.php',$cookies['admin'])['body'],'already been decided'),'duplicate gives error without mutation');
+ $reject=array_replace($post,['submission_id'=>2,'decision'=>'Rejected','review_remarks'=>'']);
+ check(request('/dashboard.php',$cookies['admin'],$reject)['status']===303 && demo_state()===$saved,'empty rejection reason cannot save');
+ check(str_contains(request('/dashboard.php',$cookies['admin'])['body'],'Reject requires a reason'),'invalid reason feedback shown');
+ $progress=student_stay_progress('B2500004');
+ check(request('/dashboard.php',$cookies['admin'],array_replace($reject,['review_remarks'=>'Please provide a readable passport stamp.']))['status']===303,'dashboard rejection saves');
+ check(demo_state()['submissions'][2]['status']==='Rejected' && demo_state()['submissions'][2]['review_remarks']==='Please provide a readable passport stamp.' && count(submission_audit(2))===2,'rejection reason and audit persist');
+ check(student_stay_progress('B2500004')===$progress,'rejected exit excluded from progress');
+ check(!str_contains(request('/dashboard.php',$cookies['admin'])['body'],'id="review-2"'),'reload removes rejected row');
+ check(dashboard_alerts(all_students(),[],new DateTimeImmutable('today'))===$warnings,'independent visa and check-in warnings preserved');
+ check(count(pending_reviews())===4,'saved decisions recalculate pending queue');
+ check(str_contains(request('/dashboard-student.php',$cookies['student'])['body'],'Needs resubmission'),'student history displays rejection');
+
+ $store=$dir.'/demo.json'; rename($store,$dir.'/backup.json'); mkdir($store);
+ try { check(request('/dashboard.php',$cookies['admin'],array_replace($post,['submission_id'=>3]))['status']===303,'storage failure returns feedback redirect'); }
+ finally { rmdir($store); rename($dir.'/backup.json',$store); }
+ $failed=request('/dashboard.php',$cookies['admin']);
+ check(str_contains($failed['body'],'Review could not be saved') && !str_contains($failed['body'],'reviewed successfully') && demo_state()['submissions'][3]['status']==='Pending','failed save gives error and never reports success');
  echo $passed.' review table HTTP checks passed.'.PHP_EOL;
 } finally {
  if (is_resource($server)) { proc_terminate($server); proc_close($server); }

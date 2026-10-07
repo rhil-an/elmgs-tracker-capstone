@@ -1,0 +1,15 @@
+# Dashboard review persistence — 7 October 2026
+
+Implemented dashboard POST/Redirect/GET decisions using authenticated admin access, CSRF and review_submission. Approved stores Verified; Request Resubmission stores Rejected plus required inline reason. Success feedback only follows saved state; invalid/duplicate/storage failures show errors. Forms work without JavaScript; obsolete optimistic badge code is removed. Redirect preserves level/per_page/page and anchors feedback beside the review heading. Preview buttons/inputs disabled; preview POST remains 405.
+
+Preserved event start_date, MIME evidence rendering, student links, responsive review table and absence of an initial blue badge. Reload updates pending rows, grouped alert counts, histories and verified travel progress; independent visa/check-in warnings survive. Entry-inclusive, exit-exclusive, ongoing-through-today/365 rules unchanged. PHP/local JSON only; no real email.
+
+Pull compatibility: started clean at 2b84daa, after manager pull from 7379bec. app/submissions.php and submission-form.php teammate changes retained. New records omit location_details; profile history defensively renders optional legacy details. Local always Malaysia; Overseas country required. Stale Local-country rejection tests updated and new-contract checks added.
+
+Files: dashboard.php, app/dashboard-reviews.php, app/profile-history.php, assets/dashboard.css, assets/submission-reviews.js, tests/review-table.php, tests/submissions.php, README.md, KNOWN_ISSUES.md and this handoff.
+
+Validation: 210 passing checks: auth 58; dashboard 25; demo-seed 23; evidence 19; progress 14; review-table HTTP 40; submissions 31. All 29 PHP syntax checks and git diff --check passed. Review HTTP coverage includes actual student evidence submission then admin approval/rejection, reload status/audit/queue/history/progress, reason validation, CSRF/student role denial, preview write denial, duplicate decisions, storage failure, retained filter state and unchanged independent warnings. Temporary fixture state/server/session files cleaned by tests. Runtime JSON hash unchanged; user pending samples and image files untouched.
+
+Browser: preview inspected at desktop 1280x900/mobile 390x844. Actions disabled and reason input visible; table scroll contained (317px region, 720px table at mobile). Existing document/header overflow observed (514px document at 390px viewport). Login navigation blocked by browser client, so browser saved-decision flow not claimed; HTTP integration verifies persistence. Preview contains no attachment fixtures; evidence behavior covered by existing HTTP/rendering suites.
+
+Remaining limits: documented built-in-server preview authentication bypass, existing mobile outer overflow, no email, native PDF viewer/Apache/exhaustive accessibility and cross-browser checks unverified. JSON store durability under partial disk writes was not changed; test covers failure opening storage. No commit/push/deployment. Local server available at http://127.0.0.1:8080/dashboard.php (admin@gmail.com / 1234); read-only preview http://127.0.0.1:8080/dashboard.php?preview=review.

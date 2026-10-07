@@ -1,5 +1,6 @@
 <section class="alerts-section pending-section" aria-labelledby="pending-heading">
 <h2 id="pending-heading">Student submission reviews</h2>
+<?php if ($feedback): ?><p class="<?= $feedback['ok'] ? 'success-message' : 'error-message' ?>" role="<?= $feedback['ok'] ? 'status' : 'alert' ?>"><?= e($feedback['text']) ?></p><?php endif; ?>
 <div class="review-table-scroll" tabindex="0" role="region" aria-label="Student submission reviews table">
 <table class="review-table">
 <thead><tr><th scope="col">Student code</th><th scope="col">Submitted image</th><th scope="col">Entry / Exit Date</th><th scope="col">Tally option</th></tr></thead>
@@ -25,8 +26,18 @@
 <?php endif; ?>
 </td>
 <td><div class="review-tally">
-<button type="button" class="button primary" data-decision="Approved" disabled>Approved</button>
-<button type="button" class="button secondary" data-decision="Request Resubmission" disabled>Request Resubmission</button>
+<?php $previewRow = $reviewPreview || !empty($row['preview']); ?>
+<form method="post" action="<?= e($reviewAction) ?>">
+<?= csrf_field() ?><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>">
+<button type="submit" name="decision" value="Verified" class="button primary" data-decision="Approved" <?= $previewRow ? 'disabled' : '' ?>>Approved</button>
+</form>
+<form method="post" action="<?= e($reviewAction) ?>" class="review-rejection">
+<?= csrf_field() ?><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>">
+<label for="reason-<?= (int)$row['id'] ?>">Reason for resubmission (required)</label>
+<textarea id="reason-<?= (int)$row['id'] ?>" name="review_remarks" rows="2" maxlength="2000" required <?= $previewRow ? 'disabled' : '' ?>><?= e(($feedback['id'] ?? null) === (int)$row['id'] ? ($feedback['remarks'] ?? '') : '') ?></textarea>
+<button type="submit" name="decision" value="Rejected" class="button secondary" data-decision="Request Resubmission" <?= $previewRow ? 'disabled' : '' ?>>Request Resubmission</button>
+</form>
+<?php if ($previewRow): ?><small>Preview only: decisions cannot be saved.</small><?php endif; ?>
 <span class="sr-only" data-review-status role="status" aria-live="polite" aria-atomic="true"></span>
 </div></td>
 </tr>

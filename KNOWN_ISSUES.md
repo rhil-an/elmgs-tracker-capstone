@@ -10,13 +10,9 @@ Resolved in task 2: duplicate student alert cards, action-based pagination count
 
 Recorded 5 October 2026 during the pre-push review. These issues remain unresolved in this prototype.
 
-## Dashboard review buttons do not persist decisions
+## Dashboard review persistence resolved — 7 October 2026
 
-`assets/submission-reviews.js` enables the dashboard review buttons and changes the displayed badge when clicked. It does not submit the decision to PHP. Refreshing loses the displayed decision, and the submission status, audit history, and verified stay progress remain unchanged.
-
-Fix: connect the controls to the authenticated, CSRF-protected server review handler and update the display only after a successful save. Alternatively, keep the controls disabled or explicitly label them as a display-only preview. The separate `submission-review.php` page already provides server-side approval and rejection.
-
-Verification: approve and reject from the dashboard, reload, and confirm that the persisted status, audit history, pending queue, and relevant progress/check-in values reflect the decision. Failed saves must not display success.
+Dashboard Approved and Request Resubmission now use authenticated CSRF-protected POST forms and the shared review helper. Saved decisions update the queue, alerts, audit, history and verified progress after a redirect. Rejection requires a reason. Duplicate, invalid and storage-failure requests show errors without a success badge. Preview controls remain disabled and preview POST returns 405. See `outputs/task-handoffs/dashboard-review-persistence-20261007.md` for current checks and limits; older dated entries above describe the previous behavior.
 
 ## Dashboard preview bypasses administrator authentication
 
@@ -28,7 +24,7 @@ Verification: anonymous requests and student sessions must not access the admini
 
 ## Deployment scope
 
-This is a demo repository. Hardcoded, documented student and administrator credentials use password `1234`; they are not suitable for public deployment or real student data. Existing automated tests pass but do not establish that the two issues above are resolved.
+This is a demo repository. Hardcoded, documented student and administrator credentials use password `1234`; they are not suitable for public deployment or real student data. Existing automated tests pass but do not establish that all remaining issues are resolved.
 
 ## Sample history/evidence limitation — 6 October 2026
 

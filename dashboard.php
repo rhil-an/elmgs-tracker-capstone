@@ -4,6 +4,8 @@ $reviewPreview = PHP_SAPI === 'cli-server' && ($_GET['preview'] ?? '') === 'revi
 $user = $reviewPreview ? ['role'=>'admin'] : require_user('admin');
 $feedback = $_SESSION['dashboard_feedback'] ?? null;
 unset($_SESSION['dashboard_feedback']);
+$reviewQuery = array_intersect_key($_GET, array_flip(['level', 'per_page', 'page']));
+$reviewAction = 'dashboard.php' . ($reviewQuery ? '?' . http_build_query($reviewQuery, '', '&', PHP_QUERY_RFC3986) : '');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  if ($reviewPreview) { http_response_code(405); exit('Frontend preview does not save decisions.'); }
  verify_csrf();
@@ -13,12 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   review_submission($user,$id,submission_text($_POST,'decision',20,true),submission_text($_POST,'review_remarks',2000));
   $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Submission #'.$id.' reviewed successfully.'];
  } catch (InvalidArgumentException|DomainException $ex) {
-  $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage()];
+  $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage(),'id'=>$id ?: null,'remarks'=>is_string($_POST['review_remarks'] ?? null) ? substr($_POST['review_remarks'],0,2000) : ''];
  } catch (RuntimeException $ex) {
   error_log((string)$ex);
   $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>'Review could not be saved. Reload the queue and try again.'];
  }
- header('Location: dashboard.php#pending-heading',true,303); exit;
+ header('Location: '.$reviewAction.'#pending-heading',true,303); exit;
 }
 $students = $reviewPreview ? json_decode(file_get_contents(__DIR__.'/data/students.json'),true,512,JSON_THROW_ON_ERROR) : all_students();
 
@@ -540,6 +542,6 @@ foreach ($_GET as $key=>$value) {
         </nav>
     </main>
 </div>
-<script src="assets/submission-reviews.js"></script><script src="assets/dashboard-filters.js"></script>
+<script src="assets/dashboard-filters.js"></script>
 </body>
 </html>

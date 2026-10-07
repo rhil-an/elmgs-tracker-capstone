@@ -30,3 +30,5 @@
 .dashboard-button:focus-visible,summary:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 @media(max-width:700px) { .evidence-preview { height:260px; } .review-card { padding:16px; } }
 .review-attachments{display:flex;flex-wrap:wrap;gap:14px}.review-attachment{display:grid;gap:7px;max-width:240px}.evidence-filename{font-size:.8rem;overflow-wrap:anywhere}.evidence-actions{display:flex;gap:16px;font-size:.85rem}.review-document{display:grid;place-items:center;width:220px;min-height:125px;border:1px solid var(--line);border-radius:8px;background:#edf3fa;color:#174b83;font-weight:800}.evidence-unavailable{display:block;color:var(--muted);font-size:.85rem}
+
+.review-rejection{display:grid;gap:8px;width:100%}.review-rejection label{font-size:.85rem}.review-rejection textarea{box-sizing:border-box;width:100%;font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px}#pending-heading{scroll-margin-top:20px}

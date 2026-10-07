@@ -90,144 +90,9 @@ function history_event_date(array $submission): string
     <link rel="stylesheet" href="assets/styles.css">
     <link rel="stylesheet" href="assets/student-dashboard.css">
 
-    <style>
-        .student-dashboard {
-            max-width: 1440px;
-        }
-
-        .student-summary {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            margin-top: 24px;
-        }
-
-        .summary-card {
-            min-height: 145px;
-        }
-
-        .summary-label {
-            margin-bottom: 12px;
-            color: var(--muted);
-            font-size: .82rem;
-            font-weight: 800;
-        }
-
-        .summary-value {
-            margin: 0;
-            color: var(--ink);
-            font-size: 1.15rem;
-            font-weight: 800;
-        }
-
-        .summary-note {
-            margin: 8px 0 0;
-            color: var(--muted);
-            font-size: .82rem;
-        }
-
-        .submission-section {
-            margin-top: 28px;
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 18px;
-            margin-bottom: 14px;
-        }
-
-        .section-heading h2 {
-            margin: 0 0 4px;
-            font-size: 1.3rem;
-        }
-
-        .section-heading p {
-            margin: 0;
-            color: var(--muted);
-            font-size: .88rem;
-        }
-
-        .submission-card {
-            overflow: hidden;
-            padding: 24px;
-            border: 1px solid var(--line);
-            border-radius: 13px;
-            background: #fff;
-            box-shadow: 0 8px 20px rgba(34, 43, 55, .04);
-        }
-
-        .submission-table {
-            width: 100%;
-            min-width: 700px;
-            border-collapse: collapse;
-        }
-
-        .submission-table th {
-            padding: 13px 15px;
-            background: #f7f8fa;
-            border-bottom: 1px solid var(--line);
-            color: #536071;
-            font-size: .74rem;
-            text-align: left;
-            text-transform: uppercase;
-        }
-
-        .submission-table td {
-            padding: 16px 15px;
-            border-bottom: 1px solid #e7ebef;
-            color: #3c4857;
-            font-size: .88rem;
-        }
-
-        .submission-table tr:last-child td {
-            border-bottom: 0;
-        }
-
-        .submission-date {
-            white-space: nowrap;
-            font-weight: 800;
-        }
-
-        .submission-scroll {
-            overflow-x: auto;
-        }
-
-        .student-help {
-            margin-top: 24px;
-            padding: 20px 24px;
-            border: 1px solid #d8e4ef;
-            border-radius: 12px;
-            background: #f3f8fc;
-        }
-
-        .student-help h2 {
-            margin: 0 0 5px;
-            color: var(--ink);
-            font-size: 1rem;
-        }
-
-        .student-help p {
-            margin: 0;
-            color: var(--muted);
-            font-size: .88rem;
-        }
-
-        @media (max-width: 850px) {
-            .student-summary {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 620px) {
-            .student-summary {
-                grid-template-columns: 1fr;
-            }
-
-}
-    </style>
 </head>
 
-<body>
+<body class="student-portal-page">
 <div class="app-shell">
 
     <header class="topbar">
@@ -261,56 +126,33 @@ function history_event_date(array $submission): string
                 >
                     Submission History
                 </a>
-            <?php echo logout_control(); ?></nav>
+            <a class="nav-link" href="profile-student.php">My Profile</a><?php echo logout_control(); ?></nav>
         </div>
     </header>
 
     <main class="content student-dashboard" id="main-content">
-        <div class="student-account" aria-label="Logged-in student">
+        <a class="student-account" href="profile-student.php" aria-label="My Profile">
             <span class="student-account-avatar" aria-hidden="true"><?= e(initials($student['name'])) ?></span>
-            <span class="student-account-name"><?= e($student['name']) ?></span>
-        </div>
+            <span class="student-account-details"><span class="student-account-name"><?= e($student['name']) ?></span><span class="student-account-label">My Profile <span aria-hidden="true">↗</span></span></span></a>
 
         <header class="page-header">
             <div>
                 <p class="eyebrow">Student Portal</p>
                 <h1>My Dashboard</h1>
                 <p class="record-count">
-                    View your profile and compliance submissions
+                    Your stay progress, important dates and submitted proof
                 </p>
             </div>
 
-            <a class="button primary student-main-action" href="submission-form.php">Submit New Proof</a>
+            <a class="button primary student-main-action" href="submission-form.php"><span aria-hidden="true">＋</span> Submit Proof</a>
         </header>
 
-<section
-            class="profile-hero"
-            aria-labelledby="student-profile-heading"
-        >
-<div>
-<h2 id="student-profile-heading">My Student Profile</h2>
-
-                <p class="profile-id">
-                    <?= e($student['id']) ?>
-                    ·
-                    <?= e($student['nationality']) ?>
-                </p>
-
-                <p class="profile-meta">
-                    <span>
-                        <strong>Faculty / Programme:</strong>
-                        <?= e($student['faculty']) ?>
-                    </span>
-
-</p>
-            </div>
-
-        </section>
-        <?= stay_progress_html(student_stay_progress($studentId)) ?>
+<div class="student-overview">
+<?= stay_progress_html(student_stay_progress($studentId)) ?>
 
         <section
             class="profile-grid student-summary"
-            aria-label="Student summary"
+            aria-label="Compliance and important dates"
         >
             <article class="profile-card summary-card">
                 <p class="summary-label">Compliance Status</p>
@@ -322,7 +164,7 @@ function history_event_date(array $submission): string
                 </p>
 
                 <p class="summary-note">
-                    Current compliance result
+                    Recorded compliance result
                 </p>
             </article>
 
@@ -358,11 +200,12 @@ function history_event_date(array $submission): string
                 </p>
 
                 <p class="summary-note">
-                    <?= $daysSinceCheckIn ?> days ago
+                    <?= $daysSinceCheckIn ?> days ago · <?= $daysSinceCheckIn > 30 ? 'Overdue' : 'Within 30 days' ?>
                 </p>
             </article>
         </section>
 
+        </div>
         <section
             class="submission-section"
             id="submissions"
@@ -375,7 +218,7 @@ function history_event_date(array $submission): string
                     </h2>
 
                     <p>
-                        View the status of your previous submissions.
+                        All submissions · newest first
                     </p>
                 </div>
             </div>
@@ -437,7 +280,7 @@ function history_event_date(array $submission): string
             </h2>
 
             <p>
-                Submit the required documents or contact the International Student Office
+                View <a href="profile-student.php">My Profile</a> or contact the International Student Office
                 if any information on your profile is incorrect.
             </p>
         </section>

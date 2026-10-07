@@ -1,0 +1,19 @@
+# Student dashboard redesign — 7 October 2026
+
+Scope B completed against initial HEAD 62d5124, clean main at dispatch. Read current PHP/local JSON code; no repository AGENTS.md found. Owned changes: dashboard-student.php, assets/student-dashboard.css, new tests/student-dashboard.php, this handoff and two screenshots. Shared README/KNOWN_ISSUES, backend/auth/data, router/profile endpoint, app/progress.php and shared styles/scripts were not edited by this task. Other dirty files belong to concurrent profile/progress work. No commit, push, server deployment, email, runtime reset or chat messaging.
+
+## Design
+
+Original native PHP/HTML/CSS layout inspired structurally by official Moodle dashboard guidance (progress/upcoming dates/quick navigation): https://docs.moodle.org/405/en/dashboard . No copied LMS courses/grades widgets. Account name/initials in white area is a My Profile link; red header also exposes My Profile. Personal/academic overview duplication removed; profile owns that information. Heading and prominent Submit Proof action lead the page. Shared stay_progress_html remains unmodified and sits alongside compact compliance/location/visa/check-in summary cards; mobile stacks progress above two-column summaries. Full saved history remains five columns, newest-first, with persisted status and conditional Resubmit link, date-only formatting and honest missing/legacy labels. No Welcome Back or verbose submission metadata. Scoped CSS replaces inline global rules; mobile nav wraps so Logout is visible and table scroll stays contained.
+
+## Checks and integration
+
+11 new isolated render checks pass: empty/populated history, escaped identity/country, clickable account/profile navigation, one proof action, removal of personal duplication, accessible five headers, Kuala Lumpur date distinction/no times, persisted rejection label/link and stable sorting. Test creates/deletes a unique temp JSON file and never reads/writes actual runtime. Existing auth/history 58 checks pass; updated concurrent progress 24 checks pass (93 total). Progress initially failed its previous only-bar-clamped assertion while owner was working; subsequent completed owner suite passes. PHP syntax and git diff --check pass.
+
+Browser used real student@gmail.com / 1234 against existing http://127.0.0.1:8080. Profile endpoint now exists and account Enter opens authenticated My Profile with correct session identity; Submit Proof opens current teammate form; history anchor retains full table. Account Tab advances to Submit Proof with solid visible outline. Desktop 1280x900 and mobile 390x844 inspected; document scrollWidth=clientWidth=375 at mobile, contained table scrollWidth=700 versus clientWidth=325. Captures: student-dashboard-redesign-desktop-20261007.png and student-dashboard-redesign-mobile-20261007.png. Viewport reset. No submissions or review decisions made. Shared progress integration shows 365/365, 100%, 0 remaining, Requirement met and 616 actual verified days; underlying calculator/fixture not changed here.
+
+Actual runtime SHA256 before and after: B2FE923589AE9FBC64F50829FCEC4534F861FB0CA7FE4CAB6FF931122099964F. Evidence/sample files untouched. Profile/progress integration visibly present, but their exhaustive backend/ownership/calculation tests belong to their owners; this task does not certify their entire scope.
+
+## Limits / next steps
+
+Exhaustive cross-browser/screen-reader, long-name visual stress and live rejected-record/resubmission navigation not browser-tested (rejected conditional URL tested in isolated fixtures). No production/public deployment testing. Read this handoff together with concurrent profile/progress handoffs. Retain session_student identity, saved review status, <=30 visa and >30 check-in boundaries; Overseas alone never adds a warning. Preview requires student login: http://127.0.0.1:8080/dashboard-student.php . No new setup or seed required.

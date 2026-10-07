@@ -1,0 +1,8 @@
+.student-profile-page .content{max-width:1100px}
+.student-profile-page .student-profile-details{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.student-profile-page .student-profile-details>div{grid-template-columns:145px minmax(0,1fr);padding:14px 0}
+.student-profile-page .detail-list dd{text-align:left;overflow-wrap:anywhere}
+.student-profile-page .profile-note{color:#536071;font-size:.85rem;line-height:1.6;margin-bottom:0}
+.student-profile-page a:focus-visible,.student-profile-page button:focus-visible{outline:3px solid #1769aa;outline-offset:3px}
+@media(max-width:700px){.student-profile-page .student-profile-details{grid-template-columns:1fr}.student-profile-page .profile-grid{grid-template-columns:1fr}}
+@media(max-width:430px){.student-profile-page .student-profile-details>div{grid-template-columns:1fr}}

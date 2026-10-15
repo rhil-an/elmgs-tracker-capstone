@@ -31,7 +31,7 @@ Open http://127.0.0.1:8080/. PHP 8.2+ is required; curl is used by the HTTP test
 
 Student login maps to B2500004 and opens dashboard-student.php. Admin login opens dashboard.php. Edit the if/elseif conditions in login.php to change demo credentials. These hardcoded accounts are for the prototype.
 
-Sessions, role/ownership checks, CSRF protection, session ID regeneration and POST logout are retained. Original top navigation, responsive screens, Asia/Kuala_Lumpur dates, visa warnings within 30 days and check-ins overdue after more than 30 days are preserved. Overseas alone is not a compliance warning.
+Sessions, role/ownership checks, CSRF protection, session ID regeneration and POST logout are retained. Original top navigation, responsive screens, Asia/Kuala_Lumpur dates, visa warnings within four months and check-ins overdue after more than 30 days are preserved. Overseas alone is not a compliance warning.
 
 ## Data and existing screens
 

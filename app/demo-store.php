@@ -1,7 +1,7 @@
 <?php
 // Lightweight local demo state for the existing submission screens.
 function demo_store_path(): string { return getenv('ICOMPLIANCE_DEMO_FILE') ?: dirname(__DIR__) . '/.runtime/demo.json'; }
-function empty_demo_state(): array { return ['submissions'=>[], 'evidence'=>[], 'audit'=>[], 'checkins'=>[]]; }
+function empty_demo_state(): array { return ['submissions'=>[], 'evidence'=>[], 'audit'=>[], 'checkins'=>[], 'student_details'=>[]]; }
 function next_demo_id(array $rows): int { return $rows ? max(array_map('intval', array_keys($rows))) + 1 : 1; }
 function demo_state(): array {
     $path=demo_store_path();
@@ -29,7 +29,9 @@ function update_demo_state(callable $change): mixed {
 function all_students(): array {
     $students=json_decode(file_get_contents(dirname(__DIR__).'/data/students.json'),true,512,JSON_THROW_ON_ERROR);
     $state=demo_state();
-    foreach ($students as &$student) $student=array_replace($student,$state['checkins'][$student['id']]??[]);
+    foreach ($students as &$student) {
+        $student=array_replace($student,$state['checkins'][$student['id']]??[],$state['student_details'][$student['id']]??[]);
+    }
     unset($student); return $students;
 }
 function find_student(string $id): ?array {
@@ -42,3 +44,12 @@ function demo_submissions(): array {
 }
 function submission_files(int $id): array { return array_values(array_filter(demo_state()['evidence'],fn($file)=>$file['submission_id']===$id)); }
 function submission_audit(int $id): array { return array_values(array_filter(demo_state()['audit'],fn($entry)=>$entry['submission_id']===$id)); }
+
+function save_student_details(array $user, string $studentId, array $details): void {
+    if (($user['role'] ?? '') !== 'admin') throw new DomainException('Only administrators can edit student details.');
+    if (!find_student($studentId)) throw new InvalidArgumentException('Student record not found.');
+    update_demo_state(function (&$state) use ($studentId, $details): void {
+        $state['student_details'] ??= [];
+        $state['student_details'][$studentId] = array_replace($state['student_details'][$studentId] ?? [], $details);
+    });
+}

@@ -11,7 +11,7 @@ foreach ([30=>0,31=>1] as $days=>$expected) {
  $row=array_replace($student,['lastCheckIn'=>$today->modify('-'.$days.' days')->format('Y-m-d')]);
  check(count(dashboard_alerts([$row],[],$today))===$expected,'check-in boundary '.$days);
 }
-foreach ([30=>1,31=>0] as $days=>$expected) {
+foreach ([120=>1,121=>0] as $days=>$expected) {
  $row=array_replace($student,['visaExpiry'=>$today->modify('+'.$days.' days')->format('Y-m-d')]);
  check(count(dashboard_alerts([$row],[],$today))===$expected,'visa boundary '.$days);
 }

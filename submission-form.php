@@ -17,7 +17,7 @@ $parent = filter_var(
 ) ?: null;
 
 $values = [
-    'kind' => 'CheckIn',
+    'kind' => 'Exit',
     'location' => 'Local',
     'country' => 'Malaysia',
     'start_date' => date('Y-m-d'),
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?= $parent ? 'Resubmit Proof' : 'Submit Proof' ?>
                     </h1>
                     <p>
-                        Location check-ins describe today. Entry/exit declarations record one historical event date. The admin verifies your entered date against the attached passport image.
+                        Use this form when you leave Malaysia or enter Malaysia. Select the travel event, add the date shown on your passport stamp, and upload the matching evidence for review.
                     </p>
                 </div>
             </header>
@@ -157,13 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="resubmission_of" value="<?= $parent ?? '' ?>">
 
                     <label>
-                        Declaration type
+                        Travel event
                         <select name="kind" required>
                             <?php
                             $declarationTypes = [
-                                'CheckIn' => 'Location check-in',
-                                'Entry' => 'Entry into Malaysia',
-                                'Exit' => 'Exit from Malaysia'
+                                'Exit' => 'I am leaving Malaysia',
+                                'Entry' => 'I am entering Malaysia'
                             ];
                             ?>
                             <?php foreach ($declarationTypes as $key => $label): ?>
@@ -175,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
 
                     <label>
-                        Location
+                        Current location
                         <select name="location" id="location" required>
                             <option value="Local" <?= $values['location'] === 'Local' ? 'selected' : '' ?>>
                                 Malaysia
@@ -192,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
 
                     <label>
-                        Entry / exit / check-in date
+                        Travel date
                         <input name="start_date" type="date" value="<?= e($values['start_date']) ?>" min="1900-01-01" max="<?= date('Y-m-d') ?>" required>
                     </label>
 
@@ -202,12 +201,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
 
                     <label>
-                        Passport stamp image / check-in evidence
+                        Passport stamp evidence
                         <input type="file" name="evidence[]" accept="image/jpeg,image/png,application/pdf" multiple>
                     </label>
 
                     <p>
-                        Maximum two files, 5 MiB each. Entry/exit requires JPEG or PNG images showing the entered event date for admin verification. Check-ins accept JPEG, PNG or PDF. Evidence is required for overseas check-ins. Local check-ins may omit it. All submissions await admin review.
+                        Upload up to two JPEG or PNG images, with a maximum of 5 MiB per file. For an overseas trip, upload both the exit and entry stamps together. Evidence is required for every travel submission and will be reviewed by an administrator.
                     </p>
 
                     <button class="button primary" type="submit">

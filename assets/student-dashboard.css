@@ -7,6 +7,24 @@
 .student-dashboard .student-account-label { color:var(--muted); font-size:.78rem; }
 .student-dashboard .page-header { align-items:center; gap:24px; margin-bottom:24px; }
 .student-dashboard .page-header h1 { font-size:clamp(1.8rem,3vw,2.4rem); }
+
+.student-welcome-banner {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:24px;
+    padding:22px 26px;
+    border:1px solid var(--line);
+    border-left:5px solid var(--red);
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 8px 22px rgba(34,43,55,.06);
+}
+
+.student-welcome-banner h2 { margin:0 0 5px; color:var(--ink); font-size:1.35rem; }
+.student-welcome-banner p:last-child { margin:0; color:var(--muted); }
+.student-welcome-mark { display:grid; width:48px; height:48px; flex:0 0 48px; place-items:center; border-radius:50%; background:var(--red); color:#fff; font-size:1.3rem; font-weight:800; }
 .student-dashboard .student-main-action { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:12px 22px; text-decoration:none; white-space:nowrap; }
 .student-dashboard .student-overview { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:stretch; }
 .student-dashboard .student-overview > .stay-progress { margin:0; }
@@ -35,6 +53,7 @@
 @media(max-width:620px) {
  .student-portal-page .navigation { flex-wrap:wrap; overflow:visible; }
  .student-dashboard .page-header { flex-direction:column; align-items:stretch; gap:18px; }
+ .student-welcome-banner { align-items:flex-start; padding:20px; }
  .student-dashboard .student-main-action { width:100%; }
  .student-dashboard .submission-card { padding:8px 12px; }
  .student-dashboard .student-summary { gap:10px; }

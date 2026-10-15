@@ -31,6 +31,27 @@
                 margin-top: 24px;
                 width: 100%;
             }
+
+            .landing-banner {
+                max-width: 760px;
+                margin: 0 auto 48px;
+                padding: 22px 26px;
+                border: 1px solid #d3dbe4;
+                border-left: 5px solid #e21d2f;
+                border-radius: 12px;
+                background: #fff;
+                box-shadow: 0 8px 22px rgba(34, 43, 55, .06);
+            }
+
+            .landing-banner h2 {
+                margin: 0 0 5px;
+                font-size: 1.3rem;
+            }
+
+            .landing-banner p {
+                margin: 0;
+                color: #657384;
+            }
         </style>
     </head>
     <body>
@@ -40,7 +61,7 @@
                     <span class="brand-mark">I</span>
                     <span class="brand-name">ICompliance</span>
                 </a>
-                <span class="office-name">HELP University <span>International Student Office</span></span>
+                <span class="office-name">HELP University <span>International Student Tracking &amp; Records</span></span>
             </div>
         </header>
         <main class="content">
@@ -56,6 +77,10 @@
                     <input id="password" name="password" type="password" autocomplete="current-password" required>
                     <button class="button primary" id="submit" disabled>Sign in</button>
                 </form>
+            </section>
+            <section class="landing-banner" aria-labelledby="landing-banner-heading">
+                <h2 id="landing-banner-heading">One place for student tracking records</h2>
+                <p>Students can submit travel proof, while administrators can review records and keep important student information up to date.</p>
             </section>
         </main>
         <script>

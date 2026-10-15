@@ -293,6 +293,75 @@ function validate_evidence(
     return $result;
 }
 
+function add_admin_evidence(array $user, int $submissionId, array $upload): void {
+    if (($user['role'] ?? '') !== 'admin') throw new DomainException('Only administrators can add evidence.');
+    $submission = demo_state()['submissions'][$submissionId] ?? null;
+    if (!$submission || ($submission['status'] ?? '') !== 'Pending') {
+        throw new DomainException('Evidence can only be added to a pending submission.');
+    }
+
+    $files = validate_evidence($upload, true, false);
+    if (count($files) !== 1) throw new InvalidArgumentException('Upload one evidence file at a time.');
+    $file = $files[0];
+
+    update_demo_state(function (&$state) use ($user, $submissionId, $submission, $file): void {
+        $id = next_demo_id($state['evidence']);
+        $state['evidence'][$id] = [
+            'id' => $id,
+            'submission_id' => $submissionId,
+            'student_id' => $submission['student_id'],
+            'original_name' => $file['name'],
+            'mime_type' => $file['mime'],
+            'size' => $file['size'],
+            'content_base64' => $file['content']
+        ];
+        $state['audit'][] = [
+            'submission_id' => $submissionId,
+            'actor_id' => $user['id'],
+            'action' => 'Evidence added',
+            'email' => $user['email'] ?? 'admin',
+            'remarks' => 'Additional evidence uploaded by administrator.',
+            'created_at' => date(DATE_ATOM)
+        ];
+    });
+}
+
+function replace_admin_evidence(array $user, int $evidenceId, string $dataUrl): void {
+    if (($user['role'] ?? '') !== 'admin') throw new DomainException('Only administrators can edit evidence.');
+    if (!preg_match('#^data:(image/jpeg|image/png);base64,([A-Za-z0-9+/=]+)$#', $dataUrl, $match)) {
+        throw new InvalidArgumentException('Edited evidence must be a JPEG or PNG image.');
+    }
+
+    $bytes = base64_decode($match[2], true);
+    $dimensions = is_string($bytes) ? @getimagesizefromstring($bytes) : false;
+    if ($bytes === false || $bytes === '' || strlen($bytes) > 5242880 || $dimensions === false || $dimensions['mime'] !== $match[1]) {
+        throw new InvalidArgumentException('Edited evidence is invalid or exceeds 5 MiB.');
+    }
+
+    update_demo_state(function (&$state) use ($user, $evidenceId, $bytes, $match): void {
+        $file = $state['evidence'][$evidenceId] ?? null;
+        $submissionId = (int)($file['submission_id'] ?? 0);
+        $submission = $state['submissions'][$submissionId] ?? null;
+        if (!$file || !$submission || ($submission['status'] ?? '') !== 'Pending') {
+            throw new DomainException('Only evidence for a pending submission can be edited.');
+        }
+        $state['evidence'][$evidenceId] = array_replace($file, [
+            'mime_type' => $match[1],
+            'size' => strlen($bytes),
+            'content_base64' => base64_encode($bytes),
+            'edited_at' => date(DATE_ATOM)
+        ]);
+        $state['audit'][] = [
+            'submission_id' => $submissionId,
+            'actor_id' => $user['id'],
+            'action' => 'Evidence edited',
+            'email' => $user['email'] ?? 'admin',
+            'remarks' => 'Evidence rotated, cropped or annotated by administrator.',
+            'created_at' => date(DATE_ATOM)
+        ];
+    });
+}
+
 function save_submission(
     array $user,
     array $data,

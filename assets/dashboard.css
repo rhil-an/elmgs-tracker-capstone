@@ -1,4 +1,10 @@
 .pending-section { margin-bottom:28px; }
+.pending-heading-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.pending-heading-row h2 { margin:0; }
+.dashboard-upload-panel { margin-top:18px; padding:16px; border:1px solid var(--line); border-radius:10px; background:#f8fafc; }
+.dashboard-upload-panel summary { display:inline-flex; cursor:pointer; color:#174b83; font-weight:800; }
+.dashboard-upload-panel[open] summary { margin-bottom:16px; }
+.dashboard-upload-panel .upload-evidence-form { grid-template-columns:1.3fr 1fr auto; align-items:end; }
 #alerts-heading { scroll-margin-top:20px; }
 .alert-reasons a { display:inline-block; margin-left:8px; color:#174b83; font-weight:700; }
 .alert-card.info .alert-reasons { color:#174b83; }
@@ -28,7 +34,7 @@
 .success-message { padding:12px; background:var(--green-bg); color:var(--green); border:1px solid var(--green); border-radius:8px; }
 .alert-info,.alert-student { min-width:0; overflow-wrap:anywhere; }
 .dashboard-button:focus-visible,summary:focus-visible,a:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
-@media(max-width:700px) { .evidence-preview { height:260px; } .review-card { padding:16px; } }
+@media(max-width:700px) { .evidence-preview { height:260px; } .review-card { padding:16px; } .pending-heading-row { align-items:stretch; flex-direction:column; } .dashboard-upload-panel .upload-evidence-form { grid-template-columns:1fr; } }
 .review-attachments{display:flex;flex-wrap:wrap;gap:14px}.review-attachment{display:grid;gap:7px;max-width:240px}.evidence-filename{font-size:.8rem;overflow-wrap:anywhere}.evidence-actions{display:flex;gap:16px;font-size:.85rem}.review-document{display:grid;place-items:center;width:220px;min-height:125px;border:1px solid var(--line);border-radius:8px;background:#edf3fa;color:#174b83;font-weight:800}.evidence-unavailable{display:block;color:var(--muted);font-size:.85rem}
 
 .review-rejection{display:grid;gap:8px;width:100%}.review-rejection label{font-size:.85rem}.review-rejection textarea{box-sizing:border-box;width:100%;font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px}#pending-heading{scroll-margin-top:20px}

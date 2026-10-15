@@ -16,6 +16,54 @@ foreach ($students as $record) {
     }
 }
 
+function optional_milestone_date(mixed $value, string $label): string {
+    if ($value === null || $value === '') return '';
+    if (!is_string($value)) throw new InvalidArgumentException($label . ' must be a valid date.');
+    $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+    if (!$date || $date->format('Y-m-d') !== $value || $value < '1900-01-01') {
+        throw new InvalidArgumentException($label . ' must be a valid date.');
+    }
+    return $value;
+}
+
+function candidature_period(array $record): string {
+    if (!empty($record['candidaturePeriod'])) return (string)$record['candidaturePeriod'];
+    $start = (string)($record['postgraduateStayStartDate'] ?? '');
+    $end = (string)($record['postgraduateStayRequiredCompletionDate'] ?? '');
+    return $start && $end ? $start . ' to ' . $end : ($start ?: $end);
+}
+
+$milestones = [
+    'candidaturePeriod' => candidature_period($student ?: []),
+    'proposalDefence' => $student['proposalDefence'] ?? '',
+    'researchSeminar' => $student['researchSeminar'] ?? '',
+    'pd' => $student['pd'] ?? '',
+    'viva' => $student['viva'] ?? ''
+];
+
+$feedback = $_SESSION['student_profile_feedback'] ?? null;
+unset($_SESSION['student_profile_feedback']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    try {
+        if (!$student) throw new InvalidArgumentException('Student record not found.');
+        $details = [
+            'candidaturePeriod' => submission_text($_POST, 'candidaturePeriod', 120),
+            'proposalDefence' => optional_milestone_date($_POST['proposalDefence'] ?? '', 'Proposal defence'),
+            'researchSeminar' => optional_milestone_date($_POST['researchSeminar'] ?? '', 'Research seminar'),
+            'pd' => optional_milestone_date($_POST['pd'] ?? '', 'PD'),
+            'viva' => optional_milestone_date($_POST['viva'] ?? '', 'Viva')
+        ];
+        save_student_details(current_user(), $student['id'], $details);
+        $_SESSION['student_profile_feedback'] = ['ok' => true, 'text' => 'Postgraduate milestone details saved.'];
+    } catch (InvalidArgumentException|DomainException $ex) {
+        $_SESSION['student_profile_feedback'] = ['ok' => false, 'text' => $ex->getMessage()];
+    }
+    header('Location: student-profile.php?id=' . rawurlencode($id) . '#milestones', true, 303);
+    exit;
+}
+
 function e(string $value): string {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
@@ -37,8 +85,8 @@ if ($student) {
     $checkin = new DateTimeImmutable($student['lastCheckIn']);
     $visaDays = (int)$today->diff($visa)->format('%r%a');
     $checkinDays = max(0, (int)$checkin->diff($today)->format('%r%a'));
-    $visaState = $visaDays < 0 ? 'Expired' : ($visaDays <= 30 ? 'Expiring within 30 days' : 'Valid');
-    $visaClass = $visaDays < 0 ? 'visa-expired' : ($visaDays <= 30 ? 'visa-warning' : 'visa-valid');
+    $visaState = $visaDays < 0 ? 'Expired' : ($visaDays <= 120 ? 'Expiring within 4 months' : 'Valid');
+    $visaClass = $visaDays < 0 ? 'visa-expired' : ($visaDays <= 120 ? 'visa-warning' : 'visa-valid');
     $alerts = [];
 
     if ($student['status'] === 'Non-Compliant') {
@@ -63,7 +111,7 @@ if ($student) {
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Student compliance profile for HELP University International Student Office.">
+        <meta name="description" content="Student record for HELP University International Student Tracking and Records.">
         <title><?= $student ? e($student['name']) . ' | ICompliance' : 'Student Not Found | ICompliance' ?></title>
         <link rel="stylesheet" href="assets/styles.css">
     </head>
@@ -75,7 +123,7 @@ if ($student) {
                         <span class="brand-mark" aria-hidden="true">I</span>
                         <span class="brand-name">ICompliance</span>
                     </a>
-                    <span class="office-name">HELP University <span>International Student Office</span></span>
+                    <span class="office-name">HELP University <span>International Student Tracking &amp; Records</span></span>
                     <nav class="navigation" aria-label="Primary navigation">
                         <a class="nav-link" href="dashboard.php">Dashboard</a>
                         <a class="nav-link active" href="student-records.php" aria-current="page">Student Records</a>
@@ -94,7 +142,7 @@ if ($student) {
                         <a class="button primary" href="student-records.php#records">Back to Student Records</a>
                     </section>
                 <?php else: ?>
-                    <header class="page-header profile-page-heading"><div><p class="eyebrow">International Student Office</p><h1 id="student-name">Student Profile</h1><p>Student information, verified stay progress and submission history.</p></div></header>
+                    <header class="page-header profile-page-heading"><div><p class="eyebrow">International Student Tracking &amp; Records</p><h1 id="student-name">Student Profile</h1><p>Student information, verified stay progress and submission history.</p></div></header>
                     <section class="profile-card student-information" aria-labelledby="student-information-heading">
                         <h2 id="student-information-heading">Student &amp; Academic Information</h2>
                         <dl class="detail-list profile-information-rows">
@@ -105,6 +153,25 @@ if ($student) {
                             <div><dt>Faculty / Programme</dt><dd><?= e($student['faculty']) ?></dd></div>
                             <div><dt>Compliance status</dt><dd><span class="badge badge-<?= strtolower(str_replace(' ', '-', $student['status'])) ?>"><?= e($student['status']) ?></span></dd></div>
                         </dl>
+                    </section>
+                    <section class="profile-card milestone-card" id="milestones" aria-labelledby="milestones-heading">
+                        <div class="section-intro">
+                            <div>
+                                <h2 id="milestones-heading">Postgraduate Milestones</h2>
+                                <p>Administrators can record the learner's candidature period and key research milestones.</p>
+                            </div>
+                        </div>
+                        <?php if ($feedback): ?><p class="<?= $feedback['ok'] ? 'success-message' : 'error-message' ?>" role="status"><?= e($feedback['text']) ?></p><?php endif; ?>
+                        <form method="post" class="submission-fields">
+                            <?= csrf_field() ?>
+                            <label>Candidature period<input type="text" name="candidaturePeriod" maxlength="120" value="<?= e($milestones['candidaturePeriod']) ?>" placeholder="Example: Jan 2026 – Jan 2031"></label>
+                            <div class="milestone-fields">
+                                <?php foreach (['proposalDefence'=>'Proposal defence','researchSeminar'=>'Research seminar','pd'=>'PD','viva'=>'Viva'] as $key => $label): ?>
+                                    <label><?= e($label) ?><input type="date" name="<?= e($key) ?>" value="<?= e($milestones[$key]) ?>"></label>
+                                <?php endforeach; ?>
+                            </div>
+                            <button class="button primary" type="submit">Save milestone details</button>
+                        </form>
                     </section>
                     <?= stay_progress_html(student_stay_progress($student['id'])) ?>
                     <section class="issues-section" aria-labelledby="issues-heading">

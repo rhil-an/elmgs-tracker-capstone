@@ -10,17 +10,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  if ($reviewPreview) { http_response_code(405); exit('Frontend preview does not save decisions.'); }
  verify_csrf();
  try {
-  $id=filter_var($_POST['submission_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
-  if (!$id) throw new InvalidArgumentException('Invalid submission.');
-  review_submission($user,$id,submission_text($_POST,'decision',20,true),submission_text($_POST,'review_remarks',2000));
-  $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Submission #'.$id.' reviewed successfully.'];
+   $action=is_string($_POST['action']??null) ? $_POST['action'] : 'review';
+   $id=filter_var($_POST['submission_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+   if ($action==='upload_evidence') {
+    if (!$id) throw new InvalidArgumentException('Select a student submission.');
+    add_admin_evidence($user,$id,$_FILES['evidence']??[]);
+    $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Evidence uploaded to submission #'.$id.'.'];
+   } elseif ($action==='replace_evidence') {
+    $evidenceId=filter_var($_POST['evidence_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+    if (!$evidenceId) throw new InvalidArgumentException('Invalid evidence file.');
+    replace_admin_evidence($user,$evidenceId,submission_text($_POST,'edited_image',8000000,true));
+    $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Edited evidence saved.'];
+   } else {
+    if (!$id) throw new InvalidArgumentException('Invalid submission.');
+    review_submission($user,$id,submission_text($_POST,'decision',20,true),submission_text($_POST,'review_remarks',2000));
+    $_SESSION['dashboard_feedback']=['ok'=>true,'text'=>'Submission #'.$id.' reviewed successfully.'];
+   }
  } catch (InvalidArgumentException|DomainException $ex) {
-  $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage(),'id'=>$id ?: null,'remarks'=>is_string($_POST['review_remarks'] ?? null) ? substr($_POST['review_remarks'],0,2000) : ''];
+   $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage(),'id'=>$id ?: null,'remarks'=>is_string($_POST['review_remarks'] ?? null) ? substr($_POST['review_remarks'],0,2000) : ''];
  } catch (RuntimeException $ex) {
   error_log((string)$ex);
   $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>'Review could not be saved. Reload the queue and try again.'];
  }
- header('Location: '.$reviewAction.'#pending-heading',true,303); exit;
+  $anchor=($_POST['action']??'')==='upload_evidence' ? 'pending-upload' : 'pending-heading';
+  header('Location: '.$reviewAction.'#'.$anchor,true,303); exit;
 }
 $students = $reviewPreview ? json_decode(file_get_contents(__DIR__.'/data/students.json'),true,512,JSON_THROW_ON_ERROR) : all_students();
 
@@ -54,7 +67,7 @@ extract(dashboard_alert_page($attentionAlerts, $_GET), EXTR_SKIP);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="ISSD compliance dashboard for HELP University.">
+    <meta name="description" content="HELP University International Student Tracking and Records dashboard.">
     <title>Dashboard | ICompliance</title>
     <link rel="stylesheet" href="assets/styles.css"><link rel="stylesheet" href="assets/submissions.css"><link rel="stylesheet" href="assets/dashboard.css">
 
@@ -346,7 +359,7 @@ extract(dashboard_alert_page($attentionAlerts, $_GET), EXTR_SKIP);
           <span class="brand-mark" aria-hidden="true">I</span>
           <span class="brand-name">ICompliance</span>
         </a>
-        <span class="office-name">HELP University <span>International Student Office</span></span>
+        <span class="office-name">HELP University <span>International Student Tracking &amp; Records</span></span>
         <nav class="navigation" aria-label="Primary navigation">
           <a class="nav-link active" href="dashboard.php" aria-current="page">Dashboard</a>
           <a class="nav-link" href="student-records.php">Student Records</a>
@@ -357,7 +370,7 @@ extract(dashboard_alert_page($attentionAlerts, $_GET), EXTR_SKIP);
     <main class="content dashboard-content" id="main-content">
         <header class="page-header">
             <div>
-                <p class="eyebrow">International Student Office</p>
+                <p class="eyebrow">International Student Tracking &amp; Records</p>
                 <h1>Dashboard</h1>
                 <p class="record-count">
                     Monitoring overview for international student compliance
@@ -543,5 +556,6 @@ foreach ($_GET as $key=>$value) {
     </main>
 </div>
 <script src="assets/dashboard-filters.js"></script>
+<script src="assets/evidence-editor.js"></script>
 </body>
 </html>

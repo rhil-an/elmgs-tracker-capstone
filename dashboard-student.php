@@ -45,11 +45,11 @@ $daysSinceCheckIn = max(
 
 $visaStatus = $visaDaysRemaining < 0
     ? 'Expired'
-    : ($visaDaysRemaining <= 30 ? 'Expiring Soon' : 'Valid');
+    : ($visaDaysRemaining <= 120 ? 'Expiring Soon' : 'Valid');
 
 $visaClass = $visaDaysRemaining < 0
     ? 'visa-expired'
-    : ($visaDaysRemaining <= 30 ? 'visa-warning' : 'visa-valid');
+    : ($visaDaysRemaining <= 120 ? 'visa-warning' : 'visa-valid');
 
 $statusClass = match ($student['status']) {
     'Non-Compliant' => 'badge-non-compliant',
@@ -108,7 +108,7 @@ function history_event_date(array $submission): string
 
             <span class="office-name">
                 HELP University
-                <span>Student Portal</span>
+                <span>Student Tracking Portal</span>
             </span>
 
             <nav class="navigation" aria-label="Student navigation">
@@ -131,6 +131,14 @@ function history_event_date(array $submission): string
     </header>
 
     <main class="content student-dashboard" id="main-content">
+        <section class="student-welcome-banner" aria-labelledby="student-welcome-heading">
+            <div>
+                <p class="eyebrow">Student Tracking Portal</p>
+                <h2 id="student-welcome-heading">Keep your travel record up to date</h2>
+                <p>Submit your Malaysia entry or exit proof whenever you travel. Your submission will appear below after review.</p>
+            </div>
+            <span class="student-welcome-mark" aria-hidden="true">✓</span>
+        </section>
         <a class="student-account" href="profile-student.php" aria-label="My Profile">
             <span class="student-account-avatar" aria-hidden="true"><?= e(initials($student['name'])) ?></span>
             <span class="student-account-details"><span class="student-account-name"><?= e($student['name']) ?></span><span class="student-account-label">My Profile <span aria-hidden="true">↗</span></span></span></a>
@@ -280,7 +288,7 @@ function history_event_date(array $submission): string
             </h2>
 
             <p>
-                View <a href="profile-student.php">My Profile</a> or contact the International Student Office
+                View <a href="profile-student.php">My Profile</a> or contact Student Tracking &amp; Records
                 if any information on your profile is incorrect.
             </p>
         </section>

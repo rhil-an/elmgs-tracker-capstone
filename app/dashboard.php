@@ -22,7 +22,7 @@ function dashboard_alerts(array $students,array $pending,DateTimeImmutable $toda
   if (!empty($student['visaExpiry'])) {
    $days=(int)$today->diff(new DateTimeImmutable($student['visaExpiry']))->format('%r%a');
    if ($days<0) $add('danger','Visa has expired','visa-heading');
-   elseif ($days<=30) $add('warning','Visa expires within 30 days','visa-heading');
+    elseif ($days<=120) $add('warning','Visa expires within 4 months','visa-heading');
   }
   if (empty($student['lastCheckIn'])) $add('warning','No recorded check-in','checkin-heading');
   elseif ((int)(new DateTimeImmutable($student['lastCheckIn']))->diff($today)->format('%r%a')>30) $add('warning','Check-in is overdue','checkin-heading');

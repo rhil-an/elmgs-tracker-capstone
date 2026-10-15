@@ -11,7 +11,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ISSD Compliance Tracker student records for HELP University International Student Office.">
+  <meta name="description" content="HELP University International Student Tracking and Records.">
   <title>Student Records | ICompliance</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
@@ -23,7 +23,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
           <span class="brand-mark" aria-hidden="true">I</span>
           <span class="brand-name">ICompliance</span>
         </a>
-        <span class="office-name">HELP University <span>International Student Office</span></span>
+        <span class="office-name">HELP University <span>International Student Tracking &amp; Records</span></span>
         <nav class="navigation" aria-label="Primary navigation">
           <a class="nav-link" href="dashboard.php">Dashboard</a>
           <a class="nav-link active" href="student-records.php" aria-current="page">Student Records</a>
@@ -33,7 +33,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
     <main class="content" id="main-content">
       <header class="page-header">
         <div>
-          <p class="eyebrow">International Student Office</p>
+          <p class="eyebrow">International Student Tracking &amp; Records</p>
           <h1>Student Records</h1>
           <p class="record-count" id="record-count" aria-live="polite">Loading records…</p>
         </div>
@@ -76,7 +76,7 @@ sort($faculties, SORT_NATURAL | SORT_FLAG_CASE);
           <table>
             <caption class="sr-only">Student compliance records</caption>
             <thead><tr>
-              <th scope="col">Student</th><th scope="col">Faculty / Program</th><th scope="col">Visa Expiry</th><th scope="col">Last Check-in</th><th scope="col">Status</th><th scope="col">Current Location</th><th scope="col">Verified Stay Progress</th><th scope="col"><span class="sr-only">Profile</span></th>
+              <th scope="col">Student</th><th scope="col">Current Location</th><th scope="col">Faculty / Program</th><th scope="col">Visa Expiry</th><th scope="col">Last Check-in</th><th scope="col">Status</th><th scope="col">Verified Stay Progress</th><th scope="col"><span class="sr-only">Profile</span></th>
             </tr></thead>
             <tbody id="student-records"></tbody>
           </table>

@@ -33,12 +33,21 @@ function candidature_period(array $record): string {
     return $start && $end ? $start . ' to ' . $end : ($start ?: $end);
 }
 
+$programmeOptions = ['MPhil', 'PhD', 'PhD ODL', 'DBA'];
+$modeOptions = ['Full-Time', 'Part-Time'];
 $milestones = [
+    'programme' => $student['programme'] ?? '',
+    'studyMode' => $student['studyMode'] ?? '',
+    'learnerIntake' => $student['learnerIntake'] ?? '',
+    'candidatureDate' => $student['candidatureDate'] ?? '',
     'candidaturePeriod' => candidature_period($student ?: []),
-    'proposalDefence' => $student['proposalDefence'] ?? '',
+    'preliminaryResearchProposal' => $student['preliminaryResearchProposal'] ?? '',
+    'supervisorAppointment' => $student['supervisorAppointment'] ?? '',
     'researchSeminar' => $student['researchSeminar'] ?? '',
-    'pd' => $student['pd'] ?? '',
-    'viva' => $student['viva'] ?? ''
+    'proposalDefence' => $student['proposalDefence'] ?? '',
+    'ethicsClearance' => $student['ethicsClearance'] ?? '',
+    'finalDraftSubmission' => $student['finalDraftSubmission'] ?? '',
+    'vivaVoce' => $student['vivaVoce'] ?? ($student['viva'] ?? '')
 ];
 
 $feedback = $_SESSION['student_profile_feedback'] ?? null;
@@ -48,12 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     try {
         if (!$student) throw new InvalidArgumentException('Student record not found.');
+        $programme = submission_text($_POST, 'programme', 30, true);
+        $studyMode = submission_text($_POST, 'studyMode', 20, true);
+        if (!in_array($programme, $programmeOptions, true)) throw new InvalidArgumentException('Select a valid programme.');
+        if (!in_array($studyMode, $modeOptions, true)) throw new InvalidArgumentException('Select a valid study mode.');
         $details = [
+            'programme' => $programme,
+            'studyMode' => $studyMode,
+            'learnerIntake' => submission_text($_POST, 'learnerIntake', 80, true),
+            'candidatureDate' => optional_milestone_date($_POST['candidatureDate'] ?? '', 'Candidature date'),
             'candidaturePeriod' => submission_text($_POST, 'candidaturePeriod', 120),
-            'proposalDefence' => optional_milestone_date($_POST['proposalDefence'] ?? '', 'Proposal defence'),
+            'preliminaryResearchProposal' => optional_milestone_date($_POST['preliminaryResearchProposal'] ?? '', 'Preliminary research proposal'),
+            'supervisorAppointment' => optional_milestone_date($_POST['supervisorAppointment'] ?? '', 'Appointment of supervisor'),
             'researchSeminar' => optional_milestone_date($_POST['researchSeminar'] ?? '', 'Research seminar'),
-            'pd' => optional_milestone_date($_POST['pd'] ?? '', 'PD'),
-            'viva' => optional_milestone_date($_POST['viva'] ?? '', 'Viva')
+            'proposalDefence' => optional_milestone_date($_POST['proposalDefence'] ?? '', 'Proposal defence'),
+            'ethicsClearance' => optional_milestone_date($_POST['ethicsClearance'] ?? '', 'Ethics clearance'),
+            'finalDraftSubmission' => optional_milestone_date($_POST['finalDraftSubmission'] ?? '', 'Final draft submission'),
+            'vivaVoce' => optional_milestone_date($_POST['vivaVoce'] ?? '', 'Viva voce examination')
         ];
         save_student_details(current_user(), $student['id'], $details);
         $_SESSION['student_profile_feedback'] = ['ok' => true, 'text' => 'Postgraduate milestone details saved.'];
@@ -164,9 +184,15 @@ if ($student) {
                         <?php if ($feedback): ?><p class="<?= $feedback['ok'] ? 'success-message' : 'error-message' ?>" role="status"><?= e($feedback['text']) ?></p><?php endif; ?>
                         <form method="post" class="submission-fields">
                             <?= csrf_field() ?>
-                            <label>Candidature period<input type="text" name="candidaturePeriod" maxlength="120" value="<?= e($milestones['candidaturePeriod']) ?>" placeholder="Example: Jan 2026 – Jan 2031"></label>
+                            <div class="milestone-fields candidature-fields">
+                                <label>Programme<select name="programme" required><option value="">Select programme</option><?php foreach ($programmeOptions as $option): ?><option value="<?= e($option) ?>" <?= $milestones['programme'] === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></label>
+                                <label>Study mode<select name="studyMode" required><option value="">Select mode</option><?php foreach ($modeOptions as $option): ?><option value="<?= e($option) ?>" <?= $milestones['studyMode'] === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></label>
+                                <label>Learner intake<input type="text" name="learnerIntake" maxlength="80" value="<?= e($milestones['learnerIntake']) ?>" placeholder="Example: Data – Jan 2026" required></label>
+                                <label>Candidature date<input type="date" name="candidatureDate" value="<?= e($milestones['candidatureDate']) ?>"></label>
+                            </div>
+                            <label>Candidature period<input type="text" name="candidaturePeriod" maxlength="120" value="<?= e($milestones['candidaturePeriod']) ?>" placeholder="Example: Jan 2026 - Jan 2031"></label>
                             <div class="milestone-fields">
-                                <?php foreach (['proposalDefence'=>'Proposal defence','researchSeminar'=>'Research seminar','pd'=>'PD','viva'=>'Viva'] as $key => $label): ?>
+                                <?php foreach (['preliminaryResearchProposal'=>'Preliminary research proposal','supervisorAppointment'=>'Appointment of supervisor','researchSeminar'=>'Research seminar','proposalDefence'=>'Proposal defence','ethicsClearance'=>'Ethics clearance','finalDraftSubmission'=>'Final draft submission','vivaVoce'=>'Viva voce examination'] as $key => $label): ?>
                                     <label><?= e($label) ?><input type="date" name="<?= e($key) ?>" value="<?= e($milestones[$key]) ?>"></label>
                                 <?php endforeach; ?>
                             </div>

@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$id) throw new InvalidArgumentException('Select a student submission.');
             add_admin_evidence($user, $id, $_FILES['evidence'] ?? []);
             $_SESSION['submission_review_feedback'] = ['ok' => true, 'text' => 'Evidence uploaded to submission #' . $id . '.'];
-            header('Location: submission-review.php#upload-evidence', true, 303);
+            header('Location: submission-review.php#review-' . $id, true, 303);
             exit;
         }
 
@@ -48,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $rows = demo_submissions();
-$pendingRows = array_values(array_filter($rows, static fn(array $row): bool => ($row['status'] ?? '') === 'Pending'));
 usort(
     $rows,
     fn($a, $b) =>
@@ -89,7 +88,6 @@ usort(
                         <h1>Submission Reviews</h1>
                         <p>Review the student's Malaysia entry or exit date against the attached travel evidence.</p>
                     </div>
-                    <a class="button primary" href="#upload-evidence">Upload evidence</a>
                 </header>
                 <?php if ($error): ?>
                     <p role="alert" class="error-message"><?= e($error) ?></p>
@@ -97,27 +95,6 @@ usort(
                 <?php if ($feedback): ?>
                     <p class="<?= $feedback['ok'] ? 'success-message' : 'error-message' ?>" role="status"><?= e($feedback['text']) ?></p>
                 <?php endif; ?>
-                <section class="submission-panel evidence-upload-panel" id="upload-evidence" aria-labelledby="upload-evidence-heading">
-                    <h2 id="upload-evidence-heading">Add evidence to a submission</h2>
-                    <?php if ($pendingRows): ?>
-                        <form method="post" enctype="multipart/form-data" class="submission-fields upload-evidence-form">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="action" value="upload_evidence">
-                            <label>Student submission
-                                <select name="submission_id" required>
-                                    <option value="">Choose a pending submission</option>
-                                    <?php foreach ($pendingRows as $pending): $pendingStudent = find_student((string)$pending['student_id']); ?><option value="<?= (int)$pending['id'] ?>">#<?= (int)$pending['id'] ?> · <?= e($pending['student_id']) ?> · <?= e($pendingStudent['name'] ?? '') ?></option><?php endforeach; ?>
-                                </select>
-                            </label>
-                            <label>Evidence file
-                                <input type="file" name="evidence[]" accept="image/jpeg,image/png,application/pdf" required>
-                            </label>
-                            <button class="button primary" type="submit">Upload evidence</button>
-                        </form>
-                    <?php else: ?>
-                        <p>There are no pending submissions to update.</p>
-                    <?php endif; ?>
-                </section>
                 <?php if (!$rows): ?>
                     <p>No submissions yet.</p>
                 <?php endif; ?>
@@ -130,16 +107,17 @@ usort(
                                 <dd><?= e((string)($row[$key] ?? '—')) ?></dd>
                             <?php endforeach; ?>
                         </dl>
-                        <?php foreach (submission_files((int)$row["id"]) as $file): ?>
+                        <?php $reviewFiles = submission_files((int)$row['id']); foreach ($reviewFiles as $file): ?>
                             <?php if (in_array($file['mime_type'] ?? '', ['image/jpeg', 'image/png'], true)): ?>
                                 <div class="review-evidence-card" data-evidence-editor data-evidence-id="<?= (int)$file['id'] ?>" data-review-id="<?= (int)$row['id'] ?>" data-image-url="evidence.php?id=<?= (int)$file['id'] ?>&amp;preview=1">
                                     <img class="review-stamp" src="evidence.php?id=<?= (int)$file['id'] ?>&amp;preview=1" alt="Submitted evidence: <?= e($file['original_name']) ?>" loading="lazy">
-                                    <div class="evidence-actions"><button class="button secondary" type="button" data-edit-evidence>Edit image</button><a href="evidence.php?id=<?= (int)$file['id'] ?>" target="_blank" rel="noopener">Download</a></div>
+                                    <div class="evidence-actions"><button class="button secondary" type="button" data-edit-evidence>Edit image</button><?php if ($row['status'] === 'Pending'): ?><form method="post" enctype="multipart/form-data" class="inline-evidence-upload"><input type="hidden" name="action" value="upload_evidence"><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>"><?= csrf_field() ?><label class="button secondary">Upload image<input type="file" name="evidence[]" accept="image/jpeg,image/png" required onchange="this.form.submit()"></label></form><?php endif; ?><a href="evidence.php?id=<?= (int)$file['id'] ?>" target="_blank" rel="noopener">Download</a></div>
                                 </div>
                             <?php else: ?>
                                 <p><a href="evidence.php?id=<?= $file['id'] ?>">Download <?= e($file['original_name']) ?></a></p>
                             <?php endif; ?>
                         <?php endforeach; ?>
+                        <?php if (!$reviewFiles && $row['status'] === 'Pending'): ?><p><span class="evidence-unavailable">No evidence submitted</span></p><form method="post" enctype="multipart/form-data" class="inline-evidence-upload"><input type="hidden" name="action" value="upload_evidence"><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>"><?= csrf_field() ?><label class="button secondary">Upload image<input type="file" name="evidence[]" accept="image/jpeg,image/png" required onchange="this.form.submit()"></label></form><?php endif; ?>
                         <?php if ($row['status'] === 'Pending'): ?>
                             <form method="post" class="submission-fields">
                                 <?= csrf_field() ?>
@@ -165,8 +143,8 @@ usort(
         <dialog class="evidence-editor" id="evidence-editor" aria-labelledby="evidence-editor-heading">
             <form method="dialog" class="evidence-editor-shell">
                 <header class="evidence-editor-heading"><div><p class="eyebrow">Evidence editor</p><h2 id="evidence-editor-heading">Adjust submitted image</h2></div><button class="editor-close" value="cancel" aria-label="Close image editor">×</button></header>
-                <div class="editor-canvas-wrap"><canvas id="evidence-canvas"></canvas><p id="editor-hint">Choose Annotate to draw on the image, or Crop to select an area.</p></div>
-                <div class="editor-tools" aria-label="Image editing tools"><button type="button" class="button secondary" data-editor-rotate="-90">Rotate left</button><button type="button" class="button secondary" data-editor-rotate="90">Rotate right</button><button type="button" class="button secondary" id="editor-crop">Crop</button><button type="button" class="button secondary" id="editor-annotate">Annotate</button><button type="button" class="button secondary" id="editor-reset">Reset</button></div>
+                <div class="editor-canvas-wrap"><canvas id="evidence-canvas"></canvas><p id="editor-hint">Choose Annotate to draw on the image, or Crop to draw a crop shape.</p></div>
+                <div class="editor-tools" aria-label="Image editing tools"><button type="button" class="button secondary" data-editor-rotate="-90">Rotate left</button><button type="button" class="button secondary" data-editor-rotate="90">Rotate right</button><button type="button" class="button secondary" id="editor-crop">Crop</button><select id="editor-crop-shape" class="editor-crop-shape" aria-label="Crop selection shape" hidden><option value="freehand">Free draw shape</option><option value="rectangle">Rectangular selection</option></select><button type="button" class="button secondary" id="editor-annotate">Annotate</button><button type="button" class="button secondary" id="editor-reset">Reset</button></div>
                 <div class="editor-actions"><button type="button" class="button" value="cancel" id="editor-cancel">Cancel</button><button type="button" class="button primary" id="editor-save">Save edited image</button></div>
             </form>
         </dialog>

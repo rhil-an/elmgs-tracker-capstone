@@ -31,6 +31,10 @@ if ($email === 'student@gmail.com' && $password === '1234') {
 
 session_regenerate_id(true);
 
-$_SESSION = ['user' => $user, 'csrf' => bin2hex(random_bytes(32))];
+$_SESSION = [
+    'user' => $user,
+    'csrf' => bin2hex(random_bytes(32)),
+    'show_stay_notice' => $user['role'] === 'student'
+];
 
 header('Location: ' . ($user['role'] === 'admin' ? 'dashboard.php' : 'dashboard-student.php'), true, 303);

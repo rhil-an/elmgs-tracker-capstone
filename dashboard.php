@@ -32,8 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   error_log((string)$ex);
   $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>'Review could not be saved. Reload the queue and try again.'];
  }
-  $anchor=($_POST['action']??'')==='upload_evidence' ? 'pending-upload' : 'pending-heading';
-  header('Location: '.$reviewAction.'#'.$anchor,true,303); exit;
+  header('Location: '.$reviewAction.'#pending-heading',true,303); exit;
 }
 $students = $reviewPreview ? json_decode(file_get_contents(__DIR__.'/data/students.json'),true,512,JSON_THROW_ON_ERROR) : all_students();
 

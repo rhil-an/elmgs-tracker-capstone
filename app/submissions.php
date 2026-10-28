@@ -300,7 +300,9 @@ function add_admin_evidence(array $user, int $submissionId, array $upload): void
         throw new DomainException('Evidence can only be added to a pending submission.');
     }
 
-    $files = validate_evidence($upload, true, false);
+    $existingFiles = submission_files($submissionId);
+    if (count($existingFiles) >= 2) throw new DomainException('A submission can contain a maximum of two images.');
+    $files = validate_evidence($upload, true, true);
     if (count($files) !== 1) throw new InvalidArgumentException('Upload one evidence file at a time.');
     $file = $files[0];
 

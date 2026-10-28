@@ -4,6 +4,8 @@ declare(strict_types=1);
 require __DIR__ . '/app/progress.php';
 $student = session_student();
 $studentId = $student['id'];
+$showStayNotice = !empty($_SESSION['show_stay_notice']);
+unset($_SESSION['show_stay_notice']);
 
 function e(string $value): string
 {
@@ -72,6 +74,7 @@ function history_event_date(array $submission): string
     if ($end !== '' && $end !== $start) return $date->format('d M Y') . ' (legacy range; needs clarification)';
     return $date->format('d M Y');
 }
+
 ?>
 
 <!doctype html>
@@ -214,7 +217,7 @@ function history_event_date(array $submission): string
         </section>
 
         </div>
-        <section
+         <section
             class="submission-section"
             id="submissions"
             aria-labelledby="submission-heading"
@@ -295,5 +298,21 @@ function history_event_date(array $submission): string
 
     </main>
 </div>
+<?php if ($showStayNotice): ?>
+<div class="stay-notice-backdrop" id="stay-notice" role="presentation">
+    <section class="stay-notice" role="dialog" aria-modal="true" aria-labelledby="stay-notice-heading">
+        <p class="eyebrow">Important reminder</p>
+        <h2 id="stay-notice-heading">Your stay requirement</h2>
+        <p>As an international student, you are required to maintain <strong>365 verified days</strong> in Malaysia during your postgraduate study period.</p>
+        <button class="button primary" type="button" id="close-stay-notice">Continue</button>
+    </section>
+</div>
+<script>
+    const stayNotice = document.getElementById('stay-notice');
+    const closeStayNotice = document.getElementById('close-stay-notice');
+    closeStayNotice?.addEventListener('click', () => stayNotice?.remove());
+    stayNotice?.addEventListener('click', event => { if (event.target === stayNotice) stayNotice.remove(); });
+</script>
+<?php endif; ?>
 </body>
 </html>

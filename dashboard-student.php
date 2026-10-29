@@ -129,7 +129,9 @@ function history_event_date(array $submission): string
                 >
                     Submission History
                 </a>
-            <a class="nav-link" href="profile-student.php">My Profile</a><?php echo logout_control(); ?></nav>
+                <a class="nav-link" href="rules.php">Rules &amp; Guidance</a>
+                <a class="nav-link" href="profile-student.php">My Profile</a>
+                <?php echo logout_control(); ?></nav>
         </div>
     </header>
 
@@ -303,7 +305,7 @@ function history_event_date(array $submission): string
     <section class="stay-notice" role="dialog" aria-modal="true" aria-labelledby="stay-notice-heading">
         <p class="eyebrow">Important reminder</p>
         <h2 id="stay-notice-heading">Your stay requirement</h2>
-        <p>As an international student, you are required to maintain <strong>365 verified days</strong> in Malaysia during your postgraduate study period.</p>
+        <p>As an international student, you are required to maintain verified presence in Malaysia for <strong>one-third (1/3) of your approved study period</strong>.</p>
         <button class="button primary" type="button" id="close-stay-notice">Continue</button>
     </section>
 </div>

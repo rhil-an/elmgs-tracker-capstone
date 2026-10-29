@@ -69,7 +69,7 @@ usort(
             <header class="topbar">
                 <div class="topbar-inner">
                     <a class="brand" href="dashboard.php">
-                        <span class="brand-mark">I</span>
+                        <img class="brand-mark" src="assets/help-logo.png" alt="HELP University">
                         <span class="brand-name">ICompliance</span>
                     </a>
                     <span class="office-name">HELP University <span>International Student Tracking &amp; Records</span></span>

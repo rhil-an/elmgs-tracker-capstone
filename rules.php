@@ -54,15 +54,15 @@ if ($currentProgramme === '') {
     <header class="topbar">
         <div class="topbar-inner">
             <a class="brand" href="dashboard-student.php" aria-label="Student dashboard">
-                <span class="brand-mark" aria-hidden="true">I</span>
+                <img class="brand-mark" src="assets/help-logo.png" alt="HELP University">
                 <span class="brand-name">ICompliance</span>
             </a>
             <span class="office-name">HELP University <span>Student Tracking Portal</span></span>
             <nav class="navigation" aria-label="Student navigation">
                 <a class="nav-link" href="dashboard-student.php">My Dashboard</a>
+                <a class="nav-link" href="dashboard-student.php#submissions">Submission History</a>
                 <a class="nav-link active" href="rules.php" aria-current="page">Rules &amp; Guidance</a>
                 <a class="nav-link" href="profile-student.php">My Profile</a>
-                <a class="nav-link" href="submission-form.php">Submit Proof</a>
                 <?= logout_control() ?>
             </nav>
         </div>

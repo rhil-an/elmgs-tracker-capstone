@@ -105,7 +105,7 @@ function history_event_date(array $submission): string
                 href="dashboard-student.php"
                 aria-label="Student dashboard"
             >
-                <span class="brand-mark" aria-hidden="true">I</span>
+                <img class="brand-mark" src="assets/help-logo.png" alt="HELP University">
                 <span class="brand-name">ICompliance</span>
             </a>
 
@@ -125,7 +125,7 @@ function history_event_date(array $submission): string
 
                 <a
                     class="nav-link"
-                    href="#submissions"
+                    href="dashboard-student.php#submissions"
                 >
                     Submission History
                 </a>

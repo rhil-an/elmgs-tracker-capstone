@@ -46,7 +46,7 @@ try {
  check($statuses->length===6 && $empty,'initial status empty/invisible; accessible live region retained without blue badge');
  check($xpath->query('//tr[@data-review-row]//button[@data-decision]')->length===12,'both review controls retained for every row');
 
- check($xpath->query('//tr[@data-review-row]//form[@method="post"]')->length===12,'dashboard controls are real POST forms');
+ check($xpath->query('//tr[@data-review-row]//form[@method="post"][.//button[@data-decision]]')->length===12,'dashboard review controls are real POST forms, separate from evidence upload forms');
  check($xpath->query('//tr[@data-review-row]//textarea[@name="review_remarks" and @required]')->length===6,'inline rejection reasons required');
  $before=demo_state(); $warnings=dashboard_alerts(all_students(),[],new DateTimeImmutable('today'));
  $post=['csrf'=>str_repeat('a',64),'submission_id'=>1,'decision'=>'Verified'];

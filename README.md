@@ -1,5 +1,22 @@
 # ICompliance simple PHP demo
 
+## PostgreSQL demo workflow
+
+A local `icompliance_demo` database supports profiles, accounts, submissions,
+private proof versions, saved reviews and audit history. Each of the 40 dummy
+students has a login. B2500004 keeps `student@gmail.com`; others use
+`<lowercase-student-id>@students.demo.test`, for example
+`b2500001@students.demo.test`. Administrator: `admin@gmail.com`. The seed assigns
+password `1234` to new demo accounts only; login checks each saved password hash.
+Re-running setup never resets an existing password.
+
+Follow [database setup](docs/DATABASE_SETUP.md) before starting the PostgreSQL
+version with `./scripts/start-postgres.ps1` (port 8081). On the configured author
+machine `./scripts/start-local.ps1` also selects PostgreSQL, on port 8080. The
+original JSON mode remains available through `-Storage json`. Existing JSON
+runtime is preserved, not imported. Never commit `.runtime` credentials, backups,
+or the working runtime. Older dated sections below describe earlier stages.
+
 ## Task 5 — final integration acceptance, 6 October 2026
 
 Today's tasks 1–4 passed final integration verification: 161 checks across auth (51), submissions (29), dashboard (25), progress (14), seed/rendering (23) and evidence HTTP (19). All 28 PHP files syntax-pass and whitespace checks pass. Browser checks used both real demo logins, desktop 1280x900/mobile 390x844, grouped alerts/live filters/reload/page reset, loaded stamp images, organized profile, compact 154px records progress and student dashboard/proof navigation/logout. Runtime JSON hash and three Pending stamp reviews stayed unchanged. No implementation repair was needed; no push/deployment/email.
@@ -12,12 +29,12 @@ Alerts now show one card per student, keeping every pending submission and indep
 
 Checks: `php tests/dashboard.php` (25), `php tests/auth.php` (51), `php tests/submissions.php` (29), `php tests/progress.php` (14): 119 checks passed. All 28 PHP files syntax-pass and git diff --check passes. Actual admin login, Pending grouping, keyboard display change, parameter preservation, pagination/reload and mobile/desktop alert layout were browser-verified. Details/screenshots: `outputs/task-handoffs/task-2-grouped-alerts.md`. Local demo state was preserved. No database, email, push or deployment was added.
 
-Login uses an explicit if/elseif credential check in `login.php`. No database, environment file, migrations, seeding or PostgreSQL extension is required.
+The historical checks above used JSON login. Current database-backed accounts and setup are described at the top of this README.
 
 ## Run
 
 ```powershell
-php -S 127.0.0.1:8080 -t . router.php
+./scripts/start-local.ps1
 ```
 
 Open http://127.0.0.1:8080/. PHP 8.2+ is required; curl is used by the HTTP tests. The login page must be served through PHP rather than opened as a file. Use the supplied router to keep local data and helper files private. Existing Apache restrictions remain available in .htaccess.
@@ -29,13 +46,13 @@ Open http://127.0.0.1:8080/. PHP 8.2+ is required; curl is used by the HTTP test
 | Student | student@gmail.com | 1234 |
 | Admin | admin@gmail.com | 1234 |
 
-Student login maps to B2500004 and opens dashboard-student.php. Admin login opens dashboard.php. Edit the if/elseif conditions in login.php to change demo credentials. These hardcoded accounts are for the prototype.
+Student login maps to B2500004 and opens dashboard-student.php. Admin login opens dashboard.php. PostgreSQL mode checks saved account hashes; new student accounts follow the email convention at the top of this README. JSON compatibility mode retains the original two demo logins.
 
 Sessions, role/ownership checks, CSRF protection, session ID regeneration and POST logout are retained. Original top navigation, responsive screens, Asia/Kuala_Lumpur dates, visa warnings within four months and check-ins overdue after more than 30 days are preserved. Overseas alone is not a compliance warning.
 
 ## Data and existing screens
 
-The 40 sample students are read from data/students.json. Existing submission, evidence, review and verified travel-progress screens remain available. Their demo state is stored in one ignored local file, .runtime/demo.json, created only on the first submission/review write. PHP needs write access to .runtime. Removing that file resets demo submissions, evidence, reviews and check-in overrides; the sample JSON stays unchanged. Notifications are labelled Demo only; no email is sent.
+In PostgreSQL mode, profiles and workflow records are read from the database. The 40 fictional source profiles remain in data/students.json for repeatable setup. JSON compatibility mode reads that roster plus the ignored .runtime/demo.json (or ICOMPLIANCE_DEMO_FILE). Keep that file to preserve earlier working records; PostgreSQL setup does not import or overwrite it. Notifications are labelled Demo only; no email is sent.
 
 This local file is a lightweight prototype store, not a production persistence system. There is no account management or password recovery. Login itself does not write submission state or require backend setup.
 

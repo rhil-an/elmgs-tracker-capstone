@@ -1,3 +1,4 @@
+<?php require_once __DIR__.'/evidence-rendering.php'; ?>
 <section class="alerts-section pending-section" aria-labelledby="pending-heading">
 <div class="pending-heading-row"><h2 id="pending-heading">Student submission reviews</h2></div>
 <?php if ($feedback): ?><p class="<?= $feedback['ok'] ? 'success-message' : 'error-message' ?>" role="<?= $feedback['ok'] ? 'status' : 'alert' ?>"><?= e($feedback['text']) ?></p><?php endif; ?>
@@ -14,10 +15,10 @@
 <?php foreach ($reviewFiles as $file): ?>
 <?php if (in_array($file['mime_type']??'', ['image/jpeg','image/png'], true)): ?>
 <div class="review-evidence-card" data-evidence-editor data-evidence-id="<?= (int)$file['id'] ?>" data-review-id="<?= (int)$row['id'] ?>" data-image-url="evidence.php?id=<?= (int)$file['id'] ?>&amp;preview=1">
-<img class="review-stamp" src="evidence.php?id=<?= (int)$file['id'] ?>&amp;preview=1" alt="Submitted evidence: <?= e($file['original_name']) ?>" loading="lazy">
+<?= review_attachments_html([$file]) ?>
 <div class="evidence-actions"><button class="button secondary" type="button" data-edit-evidence>Edit image</button><form method="post" enctype="multipart/form-data" class="inline-evidence-upload"><input type="hidden" name="action" value="upload_evidence"><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>"><?= csrf_field() ?><label class="button secondary">Upload image<input type="file" name="evidence[]" accept="image/jpeg,image/png" required onchange="this.form.submit()"></label></form><a href="evidence.php?id=<?= (int)$file['id'] ?>" target="_blank" rel="noopener">Download</a></div>
 </div>
-<?php else: ?><a href="evidence.php?id=<?= (int)$file['id'] ?>" target="_blank" rel="noopener">Download <?= e($file['original_name']) ?></a><?php endif; ?>
+<?php else: ?><?= review_attachments_html([$file]) ?><?php endif; ?>
 <?php endforeach; ?>
 <?php if (!$reviewFiles): ?><span class="evidence-unavailable">No evidence submitted</span><form method="post" enctype="multipart/form-data" class="inline-evidence-upload"><input type="hidden" name="action" value="upload_evidence"><input type="hidden" name="submission_id" value="<?= (int)$row['id'] ?>"><?= csrf_field() ?><label class="button secondary">Upload image<input type="file" name="evidence[]" accept="image/jpeg,image/png" required onchange="this.form.submit()"></label></form><?php endif; ?>
 </td>

@@ -13,7 +13,8 @@ try{
  check(req('/profile-student.php')['status']===302,'anonymous denied');
  $start=req('/login.php');$csrf=json_decode($start['body'],true)['csrf'];$r=req('/login.php',cookie($start),'POST',['email'=>'student@gmail.com','password'=>'1234','csrf'=>$csrf]);$student=cookie($r);check($r['status']===303,'real student login');
  $r=req('/profile-student.php',$student);check($r['status']===200&&str_contains($r['body'],'B2500004')&&str_contains($r['body'],'Ahmed Reza Karimi')&&!str_contains($r['body'],'B2500001'),'session owner only');
- foreach(['Student &amp; Academic Information','Visa &amp; Residence','Check-in Summary','Verified Stay Progress','submission-form.php','dashboard-student.php','logout.php']as $text)check(str_contains($r['body'],$text),'profile includes '.$text);
+ foreach(['Student &amp; Academic Information','Visa &amp; Residence','Check-in Summary','Verified Stay Progress','rules.php','dashboard-student.php','logout.php']as $text)check(str_contains($r['body'],$text),'profile includes '.$text);
+ check(str_contains(req('/dashboard-student.php',$student)['body'],'href="submission-form.php"'),'proof submission remains reachable through My Dashboard');
  foreach(['reviewer','review_remarks','submission log','submission_evidence','audit','evidence.php','textarea','<select','contenteditable']as $text)check(!str_contains(strtolower($r['body']),$text),'no private metadata/edit controls '.$text);
  check(substr_count($r['body'],'<form')===1&&str_contains($r['body'],'action="logout.php"'),'only logout form');
  foreach(['id','student_id']as $key){check(req('/profile-student.php?'.$key.'=B2500001',$student)['status']===403,'cross-owner GET '.$key);check(req('/profile-student.php',$student,'POST',[$key=>'B2500001'])['status']===403,'cross-owner POST '.$key);}

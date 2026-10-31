@@ -24,9 +24,10 @@ if (PHP_SAPI !== 'cli') {
     header('X-Content-Type-Options: nosniff');
 
     set_exception_handler(function (Throwable $error): void {
-        error_log((string)$error);
+        // PDO errors can contain SQL parameters; never write credentials/evidence to logs.
+        error_log($error instanceof PDOException ? 'Database request failed. SQLSTATE: '.$error->getCode() : (string)$error);
         http_response_code(503);
-        echo 'The demo could not complete this request. Check PHP session and local file permissions.';
+        echo 'The demo could not complete this request. Check local storage and connection settings.';
     });
 }
 
@@ -46,7 +47,17 @@ function verify_csrf(): void {
 }
 
 function current_user(): ?array {
-    return $_SESSION['user'] ?? null;
+    $user = $_SESSION['user'] ?? null;
+    if ($user && storage_uses_postgres()) {
+        $query=postgres_connection()->prepare('SELECT user_id,email,role,student_id,active FROM users WHERE user_id=?');
+        $query->execute([$user['id']]);
+        $saved=$query->fetch(PDO::FETCH_ASSOC);
+        if (!$saved || !$saved['active'] || $saved['role']!==$user['role'] || $saved['student_id']!==$user['student_id']) {
+            unset($_SESSION['user']); return null;
+        }
+        $user['email']=$saved['email'];
+    }
+    return $user;
 }
 
 function require_user(?string $role = null): array {

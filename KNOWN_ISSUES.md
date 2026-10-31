@@ -1,33 +1,24 @@
-# Known issues
+# Current known issues — 14 October 2026
 
-## Final integration acceptance — 6 October 2026
+## Open
+1. Local PostgreSQL demo is integrated and tested but not deployed or approved for real student data. The compatibility adapter reads full demo snapshots and serializes writes; larger production use should use focused queries and row-level locking.
+2. Admin dashboard outer mobile overflow was observed in older browser verification; student dashboard/profile layout was improved and verified. Recheck admin current layout before claiming fixed.
+3. No real email notification delivery. Notification labels aren't proof of sent email.
+4. JSON uses truncate/rewrite under a file lock; partial write/failed disk durability isn't atomic. This prototype is not a production persistence design.
+5. Public demo passwords, no reset/account administration, synthetic roster/stored compliance statuses and 365-day rules are not final university policy. PostgreSQL checks individual hashes; original hardcoded accounts remain only in explicit JSON fallback mode.
+6. Native browser PDF, Apache parity, exhaustive accessibility/screen-reader/cross-browser behavior and complete real-user browser journey are not fully verified.
 
-Task 5 verified today's seed/evidence/layout/filter/progress changes with 161 passing automated checks and desktop/mobile browser checks. No new integration defect was found; local runtime and Pending reviews remained unchanged. Dashboard frontend-only tally buttons, no real email delivery and built-in-server preview bypass remain unchanged. Native PDF viewer, Apache, exhaustive accessibility/cross-browser behavior and full browser submission-to-saved-decision-to-relogin flow remain unverified. Details: `outputs/task-handoffs/task-5-acceptance.md`.
+## Data limitations
+Fresh copy has no runtime travel history: seed explicitly to avoid all-zero demo progress. Do not calculate from enrolment dates. Samples include over-target actual verified totals: display completion capped, actual days retained.
+Sample stamps identify B0901583 rather than assigned dummy students; intentional mismatch is flagged in fixture remarks. Dummy Verified history isn't authentic travel.
+Original developer's reviewed runtime state is not shipped. Fresh seed has three Pending examples; observed states on separate machines may differ legitimately.
 
-## Dashboard alert grouping/filter follow-up — 6 October 2026
+## Resolved
+- Preview access bypass: anonymous GET redirects to login and student GET is denied; preview POST remains disabled. Verified in database workflow HTTP checks.
+- Dashboard display-only review buttons: fixed in 62d5124; server-saved approvals/rejections now update queue/history/progress.
+- Completion labels >100%: fixed in 549d744; actual totals preserved.
+- Duplicate alert cards/filter bounce: grouped student alerts and live filters resolved.
+- Login blocked by PostgreSQL: dependency removed; current hardcoded PHP/local JSON prototype works.
+- Missing varied demo travel: explicit repeatable synthetic seed added.
 
-Resolved in task 2: duplicate student alert cards, action-based pagination counts, filter navigation returning to the top and pagination dropping unrelated query parameters. Each card retains all issue destinations; severity filters use highest severity, while Pending matches any outstanding submission. Browser keyboard select changes and desktop/mobile layout were verified. Immediate select filtering depends on JavaScript; there is no Apply filters button. Existing display-only review decisions and preview authorization issues below remain unresolved and outside task 2.
-
-Recorded 5 October 2026 during the pre-push review. These issues remain unresolved in this prototype.
-
-## Dashboard review persistence resolved — 7 October 2026
-
-Dashboard Approved and Request Resubmission now use authenticated CSRF-protected POST forms and the shared review helper. Saved decisions update the queue, alerts, audit, history and verified progress after a redirect. Rejection requires a reason. Duplicate, invalid and storage-failure requests show errors without a success badge. Preview controls remain disabled and preview POST returns 405. See `outputs/task-handoffs/dashboard-review-persistence-20261007.md` for current checks and limits; older dated entries above describe the previous behavior.
-
-## Dashboard preview bypasses administrator authentication
-
-`dashboard.php` permits `?preview=review` without administrator authentication when served by PHP's built-in server (`PHP_SAPI === 'cli-server'`). The preview displays sample student data and demonstration reviews. POST saves are blocked, but the normal administrator access requirement is bypassed.
-
-Fix: require administrator authentication for the preview, or explicitly enable it through a development-only configuration that defaults to off. Do not use the server type alone as permission to bypass authentication.
-
-Verification: anonymous requests and student sessions must not access the administrator preview under default configuration, including when using PHP's built-in server. Verify any explicitly enabled development preview remains display-only.
-
-## Deployment scope
-
-This is a demo repository. Hardcoded, documented student and administrator credentials use password `1234`; they are not suitable for public deployment or real student data. Existing automated tests pass but do not establish that all remaining issues are resolved.
-
-## Sample history/evidence limitation — 6 October 2026
-
-The all-zero sample progress caused by absent verified travel has been addressed with the explicit, repeatable `php scripts/seed-demo.php` fixture seed. Empty unseeded state still correctly has zero verified days; other checkouts must run the command because `.runtime/demo.json` is ignored. This is synthetic history, not authentic verified student travel.
-
-The three persisted sample-image Pending reviews use the visible 8 August 2025 entry / 10 July 2025 exit dates. The images identify B0901583 rather than the assigned demo students, and their remarks flag that mismatch. Do not treat these sample reviews as authentic evidence. PDF document tiles, MIME/download headers, missing attachments and ownership were tested; native browser PDF rendering and Apache runtime behavior were not visually verified. Existing dashboard-button and preview-authentication issues above remain unchanged.
+See docs/VALIDATION.md for current tested scope. Historical reports describe then-current issues; they don't override this list.

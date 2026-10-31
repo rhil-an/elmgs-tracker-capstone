@@ -307,6 +307,8 @@ function add_admin_evidence(array $user, int $submissionId, array $upload): void
     $file = $files[0];
 
     update_demo_state(function (&$state) use ($user, $submissionId, $submission, $file): void {
+        if (($state['submissions'][$submissionId]['status'] ?? '') !== 'Pending') throw new DomainException('Only pending evidence can be changed.');
+        if (count(array_filter($state['evidence'], fn($row)=>$row['submission_id']===$submissionId)) >= 2) throw new DomainException('A submission can contain a maximum of two images.');
         $id = next_demo_id($state['evidence']);
         $state['evidence'][$id] = [
             'id' => $id,
@@ -320,6 +322,7 @@ function add_admin_evidence(array $user, int $submissionId, array $upload): void
         $state['audit'][] = [
             'submission_id' => $submissionId,
             'actor_id' => $user['id'],
+            'evidence_id' => $id,
             'action' => 'Evidence added',
             'email' => $user['email'] ?? 'admin',
             'remarks' => 'Additional evidence uploaded by administrator.',
@@ -356,6 +359,9 @@ function replace_admin_evidence(array $user, int $evidenceId, string $dataUrl): 
         $state['audit'][] = [
             'submission_id' => $submissionId,
             'actor_id' => $user['id'],
+            'evidence_id' => $evidenceId,
+            'before_details' => ['checksum'=>hash('sha256',base64_decode($file['content_base64'],true))],
+            'after_details' => ['checksum'=>hash('sha256',$bytes)],
             'action' => 'Evidence edited',
             'email' => $user['email'] ?? 'admin',
             'remarks' => 'Evidence rotated, cropped or annotated by administrator.',
@@ -600,7 +606,7 @@ function decide_demo_submission(
         $row['kind'] === 'CheckIn'
     ) {
 
-        $students = json_decode(
+        $students = storage_uses_postgres() ? postgres_students() : json_decode(
             file_get_contents(
                 dirname(__DIR__) . '/data/students.json'
             ),

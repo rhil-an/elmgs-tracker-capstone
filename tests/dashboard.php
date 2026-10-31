@@ -4,7 +4,7 @@ if (PHP_SAPI!=='cli') { http_response_code(404); exit; }
 $passed=0;
 function check(bool $ok,string $label): void { global $passed; if (!$ok) throw new RuntimeException('FAIL: '.$label); echo 'PASS: '.$label.PHP_EOL; $passed++; }
 $today=new DateTimeImmutable('2026-10-03');
-$student=['id'=>'TEST','name'=>'Test Student','faculty'=>'Test','status'=>'Compliant','currentLocation'=>'Overseas','visaExpiry'=>'2027-01-01','lastCheckIn'=>'2026-10-03'];
+$student=['id'=>'TEST','name'=>'Test Student','faculty'=>'Test','status'=>'Compliant','currentLocation'=>'Overseas','visaExpiry'=>'2027-12-01','lastCheckIn'=>'2026-10-03'];
 check(dashboard_alerts([],[],$today)===[],'empty queue and records');
 check(dashboard_alerts([$student],[],$today)===[],'overseas alone is not a warning');
 foreach ([30=>0,31=>1] as $days=>$expected) {

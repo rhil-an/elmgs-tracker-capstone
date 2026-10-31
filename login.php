@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/app/bootstrap.php';
+require_once __DIR__ . '/app/database-users.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     header('Content-Type: application/json');
@@ -19,12 +20,16 @@ verify_csrf();
 $email = strtolower(trim((string)($_POST['email'] ?? '')));
 $password = (string)($_POST['password'] ?? '');
 
-// Simple, hardcoded demo accounts. No database or account setup required.
-if ($email === 'student@gmail.com' && $password === '1234') {
+if (storage_uses_postgres()) {
+    $user = database_authenticate($email, $password);
+} elseif ($email === 'student@gmail.com' && $password === '1234') {
     $user = ['id' => 1, 'email' => $email, 'role' => 'student', 'student_id' => 'B2500004'];
 } elseif ($email === 'admin@gmail.com' && $password === '1234') {
     $user = ['id' => 2, 'email' => $email, 'role' => 'admin', 'student_id' => null];
 } else {
+    $user = null;
+}
+if (!$user) {
     header('Location: index.html?error=invalid', true, 303);
     exit;
 }

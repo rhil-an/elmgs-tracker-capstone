@@ -1,7 +1,8 @@
 <?php
 require __DIR__ . '/app/dashboard.php';
 $reviewPreview = PHP_SAPI === 'cli-server' && ($_GET['preview'] ?? '') === 'review';
-$user = $reviewPreview ? ['role'=>'admin'] : require_user('admin');
+if ($reviewPreview && $_SERVER['REQUEST_METHOD'] === 'POST') { http_response_code(405); exit('Preview does not save decisions.'); }
+$user = require_user('admin');
 $feedback = $_SESSION['dashboard_feedback'] ?? null;
 unset($_SESSION['dashboard_feedback']);
 $reviewQuery = array_intersect_key($_GET, array_flip(['level', 'per_page', 'page']));
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  } catch (InvalidArgumentException|DomainException $ex) {
    $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>$ex->getMessage(),'id'=>$id ?: null,'remarks'=>is_string($_POST['review_remarks'] ?? null) ? substr($_POST['review_remarks'],0,2000) : ''];
  } catch (RuntimeException $ex) {
-  error_log((string)$ex);
+  error_log($ex instanceof PDOException ? 'Database review failed. SQLSTATE: '.$ex->getCode() : (string)$ex);
   $_SESSION['dashboard_feedback']=['ok'=>false,'text'=>'Review could not be saved. Reload the queue and try again.'];
  }
   header('Location: '.$reviewAction.'#pending-heading',true,303); exit;
